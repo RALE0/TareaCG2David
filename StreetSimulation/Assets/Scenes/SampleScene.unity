@@ -152,11 +152,11 @@ Transform:
   m_GameObject: {fileID: 99743464}
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000021607674, y: -0.00000003774895, z: 8.7117815e-16, w: 1}
-  m_LocalPosition: {x: 39.149853, y: 0.5495652, z: 26.171976}
+  m_LocalPosition: {x: -84.59982, y: -2.0111022, z: -54.04467}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 307896756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!146 &99743466
 WheelCollider:
@@ -291,11 +291,11 @@ Transform:
   m_GameObject: {fileID: 105866167}
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000021607674, y: -0.00000003774895, z: 8.7117815e-16, w: 1}
-  m_LocalPosition: {x: 36.34164, y: 0.5495652, z: 26.171976}
+  m_LocalPosition: {x: -87.408035, y: -2.0111022, z: -54.04467}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 307896756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!146 &105866169
 WheelCollider:
@@ -562,6 +562,41 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1191954034}
   m_SourcePrefab: {fileID: 100100000, guid: 7179d797d92b9594482ec3e813202c51, type: 3}
+--- !u!1 &307896755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 307896756}
+  m_Layer: 0
+  m_Name: Wheels
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &307896756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 307896755}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 123.74968, y: 2.5606675, z: 80.216644}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 99743465}
+  - {fileID: 105866168}
+  - {fileID: 1558973009}
+  - {fileID: 1489853691}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &374947354
 GameObject:
   m_ObjectHideFlags: 0
@@ -922,7 +957,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1191954015}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8fffa6c0aadd0fd40812ffc489fb3685, type: 3}
   m_Name: 
@@ -943,7 +978,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1191954015}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a27502ef84e1600439b4770e9c0907a7, type: 3}
   m_Name: 
@@ -952,11 +987,6 @@ MonoBehaviour:
   endPosition: {x: 50, y: 1, z: 27}
   t: 0
   moveTime: 5
-  wheels:
-  - {fileID: 99743464}
-  - {fileID: 105866167}
-  - {fileID: 1558973008}
-  - {fileID: 1489853690}
 --- !u!1 &1489853690
 GameObject:
   m_ObjectHideFlags: 0
@@ -985,11 +1015,11 @@ Transform:
   m_GameObject: {fileID: 1489853690}
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000021607674, y: -0.00000003774895, z: 8.7117815e-16, w: 1}
-  m_LocalPosition: {x: 36.34164, y: 0.54956526, z: 27.828024}
+  m_LocalPosition: {x: -87.408035, y: -2.0111022, z: -52.38862}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 307896756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!146 &1489853692
 WheelCollider:
@@ -1175,11 +1205,11 @@ Transform:
   m_GameObject: {fileID: 1558973008}
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000021607674, y: -0.00000003774895, z: 8.7117815e-16, w: 1}
-  m_LocalPosition: {x: 39.149853, y: 0.54956526, z: 27.828024}
+  m_LocalPosition: {x: -84.59982, y: -2.0111022, z: -52.38862}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 307896756}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!146 &1558973010
 WheelCollider:
@@ -1292,7 +1322,6 @@ MonoBehaviour:
   endPosition: {x: 0, y: 0, z: 0}
   t: 0
   moveTime: 5
-  wheels: []
 --- !u!1 &1940780916
 GameObject:
   m_ObjectHideFlags: 0
@@ -1393,7 +1422,4 @@ SceneRoots:
   - {fileID: 1940780919}
   - {fileID: 1491077672}
   - {fileID: 303578011}
-  - {fileID: 99743465}
-  - {fileID: 105866168}
-  - {fileID: 1558973009}
-  - {fileID: 1489853691}
+  - {fileID: 307896756}

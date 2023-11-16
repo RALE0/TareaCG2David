@@ -24,7 +24,7 @@ public class MoveCar : MonoBehaviour
 
     void Start()
     {
-        // InitializeWheels();
+        InitializeWheels();
         mesh = GetComponentInChildren<MeshFilter>().mesh;
         baseVertices = mesh.vertices;
 
@@ -44,18 +44,13 @@ public class MoveCar : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             MoveCarFBObject(translationAmount);
-            foreach (GameObject wheelObject in WheelObjects)
-            {
-                MoveWheelsandRotate(translationAmount);
-            }
+            MoveWheelsandRotate(translationAmount);
         }
 
         if (Input.GetKey(KeyCode.S))
         {
             MoveCarFBObject(-translationAmount);
             MoveWheelsandRotate(-translationAmount);
-            // MoveWheelsOrigin(-translationAmount);
-            //RotateWheels();
         }
 
         
@@ -63,10 +58,7 @@ public class MoveCar : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             MoveCarLRObject(translationAmount);
-            MoveWheelsLR(translationAmount);
-
-            // Matrix4x4 rotate = HW_TransformsFer.RotateMat(angle, AXISFer.Y);
-            // ApplyTransformation(rotate);   
+            MoveWheelsLR(translationAmount);  
         }
 
         if (Input.GetKey(KeyCode.D))
