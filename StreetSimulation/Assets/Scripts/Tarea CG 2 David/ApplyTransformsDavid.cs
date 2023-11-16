@@ -15,12 +15,15 @@ public class MoveCar : MonoBehaviour
     Mesh[] wheelMesh;
     Vector3[] wheelVertices;
 
+    
 
     Mesh mesh;
     Vector3[] baseVertices;
     Vector3[] newVertices;
 
     Vector3 lastPosition;
+
+    public float rotationSpeed = 90f;
 
     void Start()
     {
@@ -35,6 +38,7 @@ public class MoveCar : MonoBehaviour
         }
 
         lastPosition = transform.position;
+        
     }
 
     void Update()
@@ -94,40 +98,6 @@ public class MoveCar : MonoBehaviour
         // Apply the translation to the car
         ApplyTransformation(move);
 
-        // Get the current rotation matrix of the car
-        Matrix4x4 rotationMatrix = Matrix4x4.Rotate(transform.rotation);
-
-        // if (translationAmount > 0f && !hasRotatedForward)
-        // {
-        //     // Calculate the direction to rotate for forward movement
-        //     Vector3 moveDirection = transform.forward;
-
-        //     // Calculate the rotation to align the forward direction with the movement direction
-        //     Quaternion targetRotation = Quaternion.LookRotation(moveDirection, transform.up);
-
-        //     // Convert the rotation to a matrix
-        //     rotationMatrix = Matrix4x4.Rotate(targetRotation);
-
-        //     hasRotatedForward = true; // Set the flag for forward rotation
-        //     hasRotatedBackward = false; // Reset the flag for backward rotation
-        // }
-        // else if (translationAmount < 0f && !hasRotatedBackward)
-        // {
-        //     // Calculate the direction to rotate for backward movement
-        //     Vector3 moveDirection = -transform.forward;
-
-        //     // Calculate the rotation to align the forward direction with the movement direction
-        //     Quaternion targetRotation = Quaternion.LookRotation(moveDirection, transform.up);
-
-        //     // Convert the rotation to a matrix
-        //     rotationMatrix = Matrix4x4.Rotate(targetRotation);
-
-        //     hasRotatedBackward = true; // Set the flag for backward rotation
-        //     hasRotatedForward = false; // Reset the flag for forward rotation
-        // }
-
-        // Apply the rotation to the car
-        // ApplyTransformation(rotationMatrix);
     }
 
     bool hasRotated = false; // Keep track of whether rotation has occurred
@@ -136,30 +106,9 @@ public class MoveCar : MonoBehaviour
     {
         Matrix4x4 move = HW_TransformsFer.TranslationMat(0f, 0f, translationAmount);
         ApplyTransformation(move);
-
-        // if (translationAmount != 0f && !hasRotated) // Check if the car is moving sideways and hasn't rotated yet
-        // {
-        //     Vector3 forwardDirection = transform.forward;
-        //     Vector3 moveDirection = -transform.right * Mathf.Sign(translationAmount); // Invert transform.right
-
-        //     Quaternion targetRotation = Quaternion.FromToRotation(forwardDirection, moveDirection);
-        //     Matrix4x4 rotationMatrix = Matrix4x4.Rotate(targetRotation);
-
-        //     ApplyTransformation(rotationMatrix);
-
-        //     hasRotated = true; // Set the flag to indicate that rotation has been performed
-        // }
-        // else if (translationAmount == 0f)
-        // {
-        //     hasRotated = false; // Reset the flag when not moving sideways
-        // }
-
-        // // Reset rotation flag if any other movement key is pressed
-        // if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
-        // {
-        //     hasRotated = false;
-        // }
     }
+
+
     
     void MoveWheelsLR(float translationAmount)
     {
@@ -214,63 +163,5 @@ public class MoveCar : MonoBehaviour
             wheelMesh.vertices = wheelVertices;
             wheelMesh.RecalculateNormals();
         }
-    }
-
-    
-    // void DoTransform(){
-    //     //create the matrices
-    //     Matrix4x4 move = HW_Transforms.TranslationMat(displacement.x *Time.time , displacement.y *Time.time, displacement.z *Time.time);
-    //     Matrix4x4 moveOrigin = HW_Transforms.TranslationMat(-displacement.x, -displacement.y, -displacement.z);
-    //     Matrix4x4 moveObject = HW_Transforms.TranslationMat(displacement.x, displacement.y, displacement.z);
-    //     Matrix4x4 rotate = HW_Transforms.RotateMat(angle * Time.time, rotationAxis);
-
-    //     //combine the matrices
-    //     //operations are executed in backwards order
-    //     Matrix4x4 composite =  move * rotate;
-
-    //     // for (int i=0; i<newVertices.Length; i++)
-    //     // {
-    //     //     Vector4 temp = new Vector4(newVertices[i].x, newVertices[i].y, newVertices[i].z, 1);
-
-    //     //     newVertices[i] = composite * temp;
-    //     // }
-    //     for (int i=0; i<newVertices.Length; i++)
-    //     {
-    //         Vector4 temp = new Vector4(baseVertices[i].x, baseVertices[i].y, baseVertices[i].z, 1);
-
-    //         newVertices[i] = composite * temp;
-    //     }
-        
-
-    //     mesh.vertices = newVertices;
-    //     mesh.RecalculateNormals();
-
-    
-    // }
-
-
-    // Function to rotate backward wheels in z axis according to the car movement speed
-    void RotateWheels()
-    {
-        // foreach (GameObject wheelObject in WheelObjects)
-        // {
-        //     Mesh wheelMesh = wheelObject.GetComponentInChildren<MeshFilter>().mesh;
-        //     Vector3[] wheelVertices = wheelMesh.vertices;
-
-        //     // Calculate the center of the wheel in local space
-        //     Vector3 wheelCenter = wheelObject.transform.TransformPoint(wheelMesh.bounds.center);
-
-        //     // Rotate around the center of the wheel
-        //     Matrix4x4 rotate = HW_TransformsFer.RotateMat(angle * Time.time, AXISFer.Z);
-
-        //     for (int i = 0; i < wheelVertices.Length; i++)
-        //     {
-        //         Vector4 temp = new Vector4(wheelVertices[i].x, wheelVertices[i].y, wheelVertices[i].z, 1);
-        //         wheelVertices[i] = rotate * temp;
-        //     }
-
-        //     wheelMesh.vertices = wheelVertices;
-        //     wheelMesh.RecalculateNormals();
-        // }
     }
 }
