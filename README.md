@@ -1,2 +1,2 @@
-# repoProyectoDavidBebo
+# repoTareaDavid
  Tarea CG 2
