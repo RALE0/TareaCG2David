@@ -5,7 +5,17 @@ Este proyecto consiste en una simulación de tráfico utilizando las herramienta
 ## Integrantes del Equipo
 
 - **David Santiago Vieyra García** - A01656030 - Investigador, Desarrollador, Analista y Tester
-- **Luis Carlos Rico Almada** - A01252831 Desarrollador
+- **Luis Carlos Rico Almada** - A01252831 - Desarrollador
+
+## Bibliografía de los Integrantes
+
+### David Santiago Vieyra García
+
+David Santiago Vieyra García es un estudiante mexicano nacido en la Ciudad de México. Actualmente está cursando su licenciatura en Ingeniería en Tecnologías Computacionales en el Instituto Tecnológico y de Estudios Superiores de Monterrey (ITESM). Apasionado por el desarrollo de software, David ha estado involucrado en proyectos relacionados con la simulación y la inteligencia artificial aplicada al tráfico vehicular. Sus intereses también incluyen la programación de sistemas distribuidos y el análisis de datos. Fuera de su vida académica, disfruta del deporte y la exploración de nuevas tecnologías.
+
+### Luis Carlos Rico Almada
+
+Luis Carlos Rico Almada es un estudiante mexicano nacido en Sonora, México. Actualmente está estudiando Ingeniería en Sistemas Computacionales en el Instituto Tecnológico y de Estudios Superiores de Monterrey (ITESM). Luis tiene un gran interés en la simulación y la optimización de sistemas, con un enfoque particular en el desarrollo de algoritmos para la gestión eficiente del tráfico vehicular. Ha participado en proyectos de investigación relacionados con la modelización y simulación de sistemas complejos. Aparte de su carrera académica, disfruta de la música y la exploración de nuevas metodologías de desarrollo de software.
 
 ## Estructura del Proyecto
 
