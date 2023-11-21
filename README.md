@@ -1,2 +1,31 @@
-# repoTareaDavid
- Tarea CG 2
+# Simulación de Tráfico con Unity y Python Mesa
+
+Este proyecto consiste en una simulación de tráfico utilizando las herramientas de desarrollo Unity y Python Mesa. El objetivo principal es desarrollar algoritmos que permitan a la mayor cantidad de vehículos (agentes) transitar y llegar a su destino respetando las señalizaciones de tránsito, tales como semáforos, normas de circulación y la interacción con otros vehículos. El enfoque principal es lograr que los vehículos lleguen a su destino en el menor tiempo posible o con la menor cantidad de pasos.
+
+## Integrantes del Equipo
+
+- **David Santiago Vieyra García** - A01656030
+- **Luis Carlos Rico Almada** - A01252831
+- **Nombre Apellido** - Desarrollador principal
+- **Nombre Apellido** - Investigador y Desarrollador
+- **Nombre Apellido** - Diseñador de la Interfaz de Usuario
+- **Nombre Apellido** - Analista y Tester
+
+## Estructura del Proyecto
+
+El proyecto se divide en las siguientes secciones principales:
+
+- **Unity**: Aquí se encuentra el entorno de simulación desarrollado en Unity, donde se visualizará y ejecutará la simulación del tráfico.
+- **Python Mesa Backend**: En esta sección se encuentran los algoritmos y lógica de simulación desarrollados en Python utilizando la librería Mesa para el modelado y la simulación de agentes.
+- **Documentación**: Contiene documentación detallada sobre el proyecto, incluyendo instrucciones de uso, guías de instalación, y explicaciones sobre el funcionamiento de la simulación y los algoritmos implementados.
+
+## Instrucciones de Uso
+
+1. Clona el repositorio a tu máquina local.
+2. Abre el entorno de Unity.
+3. Ejecuta el backend de Python Mesa.
+4. Interactúa con la simulación y observa el comportamiento de los vehículos.
+
+## Licencia
+
+Este proyecto está bajo la licencia MIT License. Para más información, consulta el archivo LICENSE.
