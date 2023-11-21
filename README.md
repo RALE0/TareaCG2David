@@ -7,7 +7,7 @@ Este proyecto consiste en una simulación de tráfico utilizando las herramienta
 - **David Santiago Vieyra García** - A01656030 - Investigador, Desarrollador, Analista y Tester
 - **Luis Carlos Rico Almada** - A01252831 - Desarrollador
 
-## Bibliografía de los Integrantes
+## Biografía de los Integrantes
 
 ### David Santiago Vieyra García
 
