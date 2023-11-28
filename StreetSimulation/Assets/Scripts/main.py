@@ -35,6 +35,24 @@ def solicitar_ancho():
         except ValueError:
             pass
         print("Por favor ingresa un número flotante positivo.")
+        
+def calcular_normal(v1, v2, v3):
+    """
+    Calcula la normal de una cara a partir de sus vértices
+    """
+    # Calcula los vectores entre los vértices
+    vector1 = [v2[0] - v1[0], v2[1] - v1[1], v2[2] - v1[2]]
+    vector2 = [v3[0] - v1[0], v3[1] - v1[1], v3[2] - v1[2]]
+
+    # Calcula el producto cruz entre los vectores
+    normal_x = vector1[1] * vector2[2] - vector1[2] * vector2[1]
+    normal_y = vector1[2] * vector2[0] - vector1[0] * vector2[2]
+    normal_z = vector1[0] * vector2[1] - vector1[1] * vector2[0]
+
+    # Normaliza el vector resultante
+    magnitud = (normal_x**2 + normal_y**2 + normal_z**2)**0.5
+    return (normal_x / magnitud, normal_y / magnitud, normal_z / magnitud)
+
 
 def generar_archivo_obj(num_triangulos, radio, ancho):
     import math
@@ -60,18 +78,31 @@ def generar_archivo_obj(num_triangulos, radio, ancho):
         archivo_obj.write(f"v 0.0000 0.0000 0.0000\n")
         archivo_obj.write(f"v {ancho:.4f} 0.0000 0.0000\n")
         
-        # Calcular y escribir normales
         archivo_obj.write("vn 0.0000 0.0000 -1.0000\n")  # Normal de la base inferior
         archivo_obj.write("vn 0.0000 0.0000 1.0000\n")   # Normal de la base superior
-
-        # Normales de la superficie lateral
-        archivo_obj.write(f"# Normals: {num_triangulos+2}\n")
+        # Escribir normales de las caras
+        archivo_obj.write("# Normales de las caras\n")
         for i in range(num_triangulos):
-            angulo1 = 2 * math.pi * i / num_triangulos
-            normal_x = math.cos(angulo1)
-            normal_y = math.sin(angulo1)
-            normal_z = 0.0
-            archivo_obj.write(f"vn {normal_x:.4f} {normal_y:.4f} {normal_z:.4f}\n")
+            siguiente = (i + 1) % num_triangulos
+            normal = calcular_normal(
+                (0.0, radio * math.cos(2 * math.pi * i / num_triangulos), radio * math.sin(2 * math.pi * i / num_triangulos)),
+                (ancho, radio * math.cos(2 * math.pi * siguiente / num_triangulos), radio * math.sin(2 * math.pi * siguiente / num_triangulos)),
+                (ancho, radio * math.cos(2 * math.pi * i / num_triangulos), radio * math.sin(2 * math.pi * i / num_triangulos))
+            )
+            archivo_obj.write(f"vn {normal[0]:.4f} {normal[1]:.4f} {normal[2]:.4f}\n")
+
+        # # Calcular y escribir normales
+        # archivo_obj.write("vn 0.0000 0.0000 -1.0000\n")  # Normal de la base inferior
+        # archivo_obj.write("vn 0.0000 0.0000 1.0000\n")   # Normal de la base superior
+
+        # # Normales de la superficie lateral
+        # archivo_obj.write(f"# Normals: {num_triangulos+2}\n")
+        # for i in range(num_triangulos):
+        #     angulo1 = 2 * math.pi * i / num_triangulos
+        #     normal_x = math.cos(angulo1)
+        #     normal_y = math.sin(angulo1)
+        #     normal_z = 0.0
+        #     archivo_obj.write(f"vn {normal_x:.4f} {normal_y:.4f} {normal_z:.4f}\n")
 
         archivo_obj.write(f"# Faces: {num_triangulos*3}\n")
         # Faces of the inferior base
