@@ -119,16 +119,3 @@ class CityModel(Model):
                 }
                 agent_data.append(agent_info)
         return agent_data
-    
-    def get_obstacle_data(self):
-        obstacle_data = []
-        for agent in self.schedule.agents:
-            if isinstance(agent, Obstacle):  # Asegúrate de que esto coincida con tu clase Obstacle
-                obstacle_info = {
-                    "id": agent.unique_id,
-                    "x": agent.pos[0],
-                    "y": agent.pos[1]
-                    # Añade aquí más atributos si es necesario
-                }
-                obstacle_data.append(obstacle_info)
-        return obstacle_data
