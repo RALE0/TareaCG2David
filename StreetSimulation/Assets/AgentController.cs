@@ -24,16 +24,39 @@ public class AgentData
     }
 }
 
+
+
+[Serializable]
+
+public class AgentsData
+{
+    public List<AgentData> positions;
+
+    public AgentsData() => this.positions = new List<AgentData>();
+}
+
+// getTrafficLights regresara un arreglo de:
+//                 {
+//                     "id": agent.unique_id,
+//                     "x": agent.pos[0],
+//                     "y": agent.pos[1],
+//                     "state": agent.state,
+//                     "light_type": agent.light_type,
+//                     "timeToChange": agent.timeToChange,
+//                     "traffic_light_states": agent.traffic_light_states
+//                 }
+
+[Serializable]
 public class TrafficLightData
 {
     public string id;
     public float x, y, z;
     public bool state;
     public string lightType;
-    public int timeToChange;
+    public float timeToChange;
     public Dictionary<string, bool> trafficLightStates;
 
-    public TrafficLightData(string id, float x, float y, float z, bool state, string lightType, int timeToChange, Dictionary<string, bool> trafficLightStates)
+    public TrafficLightData(string id, float x, float y, float z, bool state, string lightType, float timeToChange, Dictionary<string, bool> trafficLightStates)
     {
         this.id = id;
         this.x = x;
@@ -46,16 +69,6 @@ public class TrafficLightData
     }
 }
 
-
-[Serializable]
-
-public class AgentsData
-{
-    public List<AgentData> positions;
-
-    public AgentsData() => this.positions = new List<AgentData>();
-}
-
 [Serializable]
 public class TrafficLightsData
 {
@@ -63,6 +76,7 @@ public class TrafficLightsData
 
     public TrafficLightsData() => this.positions = new List<TrafficLightData>();
 }
+
 
 public class AgentController : MonoBehaviour
 {
@@ -250,7 +264,12 @@ public class AgentController : MonoBehaviour
             {
                 if (!receivedAgentIds.Contains(existingAgent.Key))
                 {
-                    keysToRemove.Add(existingAgent.Key);
+                    // if it is a car
+                    if(!existingAgent.Key.Contains("tl_"))
+                    {
+                        keysToRemove.Add(existingAgent.Key);
+                    }
+                    
                 }
             }
 
@@ -279,6 +298,8 @@ public class AgentController : MonoBehaviour
         }
         else
         {
+            Debug.Log("[GetTrafficLightsData] Received response from server.");
+            Debug.Log($"[GetTrafficLightsData] Response: {www.downloadHandler.text}");
             TrafficLightsData newData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
             HashSet<string> receivedTrafficLightIds = new HashSet<string>();
 
@@ -287,32 +308,21 @@ public class AgentController : MonoBehaviour
 
             foreach (TrafficLightData trafficLightData in newData.positions)
             {
-                Debug.Log($"[GetTrafficLightsData] Processing traffic light ID: {trafficLightData.id}");
+
                 receivedTrafficLightIds.Add(trafficLightData.id);
-
-                Vector3 trafficLightPosition = new Vector3(trafficLightData.x, trafficLightData.z, trafficLightData.y);
-                Debug.Log($"[GetTrafficLightsData] Position for traffic light ID {trafficLightData.id}: {trafficLightPosition}");
-
-                Debug.Log($"Light Type: {trafficLightData.lightType}");
-                Debug.Log($"Time to Change: {trafficLightData.timeToChange}");
-                foreach (var state in trafficLightData.trafficLightStates)
-                {
-                    Debug.Log($"State {state.Key}: {state.Value}");
-                }
 
                 if (!agents.ContainsKey(trafficLightData.id))
                 {
                     Debug.Log($"[GetTrafficLightsData] Creating new traffic light for ID {trafficLightData.id}");
-                    GameObject newTrafficLight = Instantiate(trafficLightPrefab, trafficLightPosition, Quaternion.identity);
+                    GameObject newTrafficLight = Instantiate(trafficLightPrefab, new Vector3(trafficLightData.x, trafficLightData.z, trafficLightData.y), Quaternion.identity);
                     agents.Add(trafficLightData.id, newTrafficLight);
                 }
                 else
                 {
                     Debug.Log($"[GetTrafficLightsData] Updating traffic light for ID {trafficLightData.id}");
                     // get the traffic light and set the state
-                    bool isGreen = trafficLightData.state;
-                    agents[trafficLightData.id].GetComponent<TrafficLightController>().isGreen = isGreen;
-                    Debug.Log($"[GetTrafficLightsData] Traffic light ID {trafficLightData.id} is now {(isGreen ? "green" : "not green")}");
+                    agents[trafficLightData.id].GetComponent<TrafficLightController>().isGreen = trafficLightData.state;
+                    Debug.Log($"[GetTrafficLightsData] Traffic light ID {trafficLightData.id} is now {(trafficLightData.state ? "green" : "not green")}");
                 }
             }
             Debug.Log("[GetTrafficLightsData] Traffic lights data processing complete.");

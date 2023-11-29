@@ -7,7 +7,7 @@ public class CityMaker : MonoBehaviour
     [SerializeField] TextAsset layout;
     [SerializeField] GameObject roadPrefab;
     [SerializeField] GameObject buildingPrefab;
-    [SerializeField] GameObject semaphorePrefab;
+    // [SerializeField] GameObject semaphorePrefab;
     [SerializeField] int tileSize;
 
     // Start is called before the first frame update
@@ -77,7 +77,7 @@ public class CityMaker : MonoBehaviour
                 // Comprueba si el vecino izquierdo no es otro 'S' o 's' para instanciar el semáforo
                 if (i > 0 && (tiles[i - 1] != 'S' && tiles[i - 1] != 's')) {
                     // Instancia el semáforo a la izquierda del tile actual
-                    tile = Instantiate(semaphorePrefab, position + new Vector3(-tileSize, 0, 0), Quaternion.Euler(0, 90, 0));
+                    // tile = Instantiate(semaphorePrefab, position + new Vector3(-tileSize, 0, 0), Quaternion.Euler(0, 90, 0));
                     tile.transform.parent = transform;
                 }
                 
@@ -91,7 +91,7 @@ public class CityMaker : MonoBehaviour
                 // Comprueba si el vecino izquierdo no es otro 'S' o 's' para instanciar el semáforo
                 if (i > 0 && (tiles[i - 1] != 'S' && tiles[i - 1] != 's')) {
                     // Instancia el semáforo a la izquierda del tile actual
-                    tile = Instantiate(semaphorePrefab, position + new Vector3(-tileSize, 0, 0), Quaternion.identity);
+                    // tile = Instantiate(semaphorePrefab, position + new Vector3(-tileSize, 0, 0), Quaternion.identity);
                     tile.transform.parent = transform;
                 }
                 

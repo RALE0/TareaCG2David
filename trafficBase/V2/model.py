@@ -129,9 +129,9 @@ class CityModel(Model):
                     "x": agent.pos[0],
                     "y": agent.pos[1],
                     "state": agent.state,
-                    "light_type": agent.light_type,
+                    "lightType": agent.light_type,
                     "timeToChange": agent.timeToChange,
-                    "traffic_light_states": agent.traffic_light_states
+                    "trafficLightStates": agent.traffic_light_states
                 }
                 traffic_light_data.append(traffic_light_info)
         return traffic_light_data
