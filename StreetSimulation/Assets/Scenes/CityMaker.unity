@@ -208,8 +208,56 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 284423856}
   serializedVersion: 2
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 10, y: 30, z: 10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!1 &467560882
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 467560884}
+  - component: {fileID: 467560883}
+  m_Layer: 0
+  m_Name: AgentController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &467560883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 467560882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f89bb47813aac4494ffbf7fbfdaca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentPrefab: {fileID: 3460977439320669686, guid: 9ed2c13b8e985064e9221180b0c7b86c, type: 3}
+  floor: {fileID: 891680607}
+  NAgents: 10
+  timeToUpdate: 5
+--- !u!4 &467560884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 467560882}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 7, z: -12}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -224,7 +272,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 891680609}
-  - component: {fileID: 891680608}
+  - component: {fileID: 891680610}
   m_Layer: 0
   m_Name: City
   m_TagString: Untagged
@@ -232,21 +280,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &891680608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 891680607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8036c9aab572e7041bba4f197de0f7a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  layout: {fileID: 4900000, guid: 683c71345d6e5794d83687c9a90a07ed, type: 3}
-  roadPrefab: {fileID: 100000, guid: 4f32dfddb033d3e40b5841bc53cc1689, type: 3}
-  tileSize: 1
 --- !u!4 &891680609
 Transform:
   m_ObjectHideFlags: 0
@@ -256,12 +289,29 @@ Transform:
   m_GameObject: {fileID: 891680607}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 42.02963, y: 16.902163, z: 13.969999}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &891680610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891680607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f21bfc70282a0ff4a9d98c394c802752, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layout: {fileID: 4900000, guid: 683c71345d6e5794d83687c9a90a07ed, type: 3}
+  roadPrefab: {fileID: 100000, guid: ffa95796af8d5884f9d08f66e6bb627e, type: 3}
+  buildingPrefab: {fileID: 100000, guid: 22106dc63dce41746ad234a91af2d657, type: 3}
+  semaphorePrefab: {fileID: 4984285911931077162, guid: 21c90ae7be44bec4daffc2cac768ec4c, type: 3}
+  tileSize: 1
 --- !u!1 &892626155
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,3 +413,4 @@ SceneRoots:
   - {fileID: 284423859}
   - {fileID: 892626157}
   - {fileID: 891680609}
+  - {fileID: 467560884}
