@@ -83,7 +83,7 @@ public class MoveCar : MonoBehaviour
         {
             Mesh wheelMesh = wheelObject.GetComponentInChildren<MeshFilter>().mesh;
             // Get the wheel's mesh and vertices, do the initialization here
-            Vector3[] wheelVertices = wheelMesh.vertices; // You may perform additional initialization here if needed
+            Vector3[] wheelVertices = wheelMesh.vertices; // 
         }
     }
 
