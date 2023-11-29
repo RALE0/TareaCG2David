@@ -1,8 +1,14 @@
 from agent import *
 from model import CityModel
-from mesa.visualization import CanvasGrid, BarChartModule
-from mesa.visualization import ModularServer
+from mesa.visualization import CanvasGrid, Slider, TextElement, ModularServer
 
+class CarTextElement(TextElement):
+    def __init__(self):
+        pass
+
+    def render(self, model):
+        return "Carros: " + str(model.num_agents)
+        
 def agent_portrayal(agent):
     if agent is None: return
     
@@ -40,10 +46,23 @@ def agent_portrayal(agent):
         portrayal["h"] = 0.8
     
     if (isinstance(agent, Car)):
-        portrayal["Shape"] = "circle"
-        portrayal["Color"] = "purple"
-        portrayal["Layer"] = 0
-        portrayal["r"] = 0.8
+        print(agent.dx, agent.dy)
+        if agent.dx == 0 and agent.dy == 0:
+            portrayal["Shape"] = "circle"
+            portrayal["Color"] = "black"
+            portrayal["Layer"] = 0
+            portrayal["r"] = 0.5
+        else:
+            if agent.dy != 0:
+                agent.dx = 0
+            # arrowHead
+            portrayal = {"Shape": "arrowHead",
+                        "Filled": "true",
+                        "Layer": 4,
+                        "Color": "black",
+                        "scale": 0.5,
+                        "heading_x": agent.dx,
+                        "heading_y": agent.dy}
 
 
     return portrayal
@@ -56,11 +75,13 @@ with open('city_files/2022_base.txt') as baseFile:
     width = len(lines[0])-1
     height = len(lines)
 
-model_params = {"N":5}
+# 5 parameters: name, default value, min value, max value, step
+model_params = {"numero_coches_max": Slider("Numero de coches maximo", 1, 1, 1000, 1)}
 
 print(width, height)
 grid = CanvasGrid(agent_portrayal, width, height, 500, 500)
 
-server = ModularServer(CityModel, [grid], "Traffic Base", model_params)                      
+server = ModularServer(CityModel, [grid, CarTextElement()
+                                   ], "Traffic Base", model_params)                      
 server.port = 8521 # The default
 server.launch()

@@ -4,7 +4,6 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from agent import *
 import json
-from Astar import Astar
 
 class CityModel(Model):
     """ 
@@ -13,7 +12,7 @@ class CityModel(Model):
         Args:
             N: Number of agents in the simulation
     """
-    def _init_(self, N):
+    def __init__(self, numero_coches_max):
 
         # Load the map dictionary. The dictionary maps the characters in the map file to the corresponding agent.
         dataDictionary = json.load(open("city_files/mapDictionary.json"))
@@ -32,25 +31,16 @@ class CityModel(Model):
             self.I_locations = []
             self.D_locations = []
 
-
             # Goes through each character in the map file and creates the corresponding agent.
             for r, row in enumerate(lines):
                 for c, col in enumerate(row):
                     if col in ["v", "^", ">", "<"]:
                         agent = Road(f"r_{r*self.width+c}", self, dataDictionary[col])
                         self.grid.place_agent(agent, (c, self.height - r - 1))
-                    
                     elif col == "I":
                         agent = Initialization(f"I_{r*self.width+c}", self)
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.I_locations.append((c, self.height - r - 1))
-
-                    # elif col in ["S", "s"]:
-                    #     agent = Traffic_Light(f"tl_{r*self.width+c}", self, False if col == "S" else True, int(dataDictionary[col]))
-                    #     self.grid.place_agent(agent, (c, self.height - r - 1))
-                    #     self.schedule.add(agent)
-                    #     self.traffic_lights.append(agent)
-
                     elif col == "S":
                         agent = Traffic_Light(f"tl_S{r*self.width+c}", self, False, int(dataDictionary[col]), "S")
                         self.grid.place_agent(agent, (c, self.height - r - 1))
@@ -71,8 +61,8 @@ class CityModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.D_locations.append((c, self.height - r - 1))
         
-        
         self.num_agents = 0
+        self.numero_coches_max = numero_coches_max
         self.running = True
         self.step_count = 0
         self.initialize_car()
@@ -81,7 +71,14 @@ class CityModel(Model):
         if self.I_locations and self.D_locations:
             random_I_location = random.choice(self.I_locations)
             random_D_location = random.choice(self.D_locations)
-            car_agent = Car(1000 + self.num_agents, self, random_D_location)  
+            car_agent = Car(1000 + self.num_agents, self, random_D_location) 
+            # if no car in the initial location, place the car agent, we get the cell content with self.grid.get_cell_list_contents([random_I_location])
+            contents = self.grid.get_cell_list_contents([random_I_location])
+            # and using this we can check if there is a car in the cell
+            car_in_cell = [obj for obj in contents if isinstance(obj, Car)]
+            if car_in_cell:
+                print("Cell has already a car")
+                return 
             self.grid.place_agent(car_agent, random_I_location)
             self.schedule.add(car_agent)
             self.num_agents += 1
@@ -91,7 +88,8 @@ class CityModel(Model):
         '''Advance the model by one step.'''
         self.schedule.step()
         self.step_count += 1  
-        # self.initialize_car()
 
+        # if self.num_agents <= self.numero_coches_max:
         if self.step_count % 10 == 0:
             self.initialize_car()
+        #self.initialize_car()

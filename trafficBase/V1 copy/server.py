@@ -1,6 +1,6 @@
 from agent import *
 from model import CityModel
-from mesa.visualization import CanvasGrid, BarChartModule
+from mesa.visualization import CanvasGrid, Slider
 from mesa.visualization import ModularServer
 
 def agent_portrayal(agent):
@@ -40,11 +40,35 @@ def agent_portrayal(agent):
         portrayal["h"] = 0.8
     
     if (isinstance(agent, Car)):
-        portrayal["Shape"] = "circle"
-        portrayal["Color"] = "pink"
-        portrayal["Layer"] = 0
-        portrayal["r"] = 0.8
-       
+        dx, dy = 0, 0
+
+        if agent.direction == "Right":
+            dx = 1
+            dy = 0
+        elif agent.direction == "Left":
+            dx = -1
+            dy = 0
+        elif agent.direction == "Up":
+            dx = 0
+            dy = 1
+        elif agent.direction == "Down":
+            dx = 0
+            dy = -1
+        
+        if not agent.direction:
+            portrayal = {"Shape": "circle",
+                                "Filled": "true",
+                                "Layer": 4,
+                                "Color": "black",
+                                "scale": 0.5}
+        else:
+            portrayal = {"Shape": "arrowHead",
+                                "Filled": "true",
+                                "Layer": 4,
+                                "Color": "black",
+                                "scale": 0.5,
+                                "heading_x": dx,
+                                "heading_y": dy}
 
     return portrayal
 
@@ -56,7 +80,8 @@ with open('city_files/2022_base.txt') as baseFile:
     width = len(lines[0])-1
     height = len(lines)
 
-model_params = {"N":5}
+# 5 parameters: name, default value, min value, max value, step 
+model_params = {"numero_coches_max": Slider("Numero de coches maximo", 10, 0, 100, 1)}
 
 print(width, height)
 grid = CanvasGrid(agent_portrayal, width, height, 500, 500)
