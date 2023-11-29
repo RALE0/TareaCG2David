@@ -119,3 +119,19 @@ class CityModel(Model):
                 }
                 agent_data.append(agent_info)
         return agent_data
+    
+    def get_traffic_light_data(self):
+        traffic_light_data = []
+        for agent in self.schedule.agents:
+            if isinstance(agent, Traffic_Light):
+                traffic_light_info = {
+                    "id": agent.unique_id,
+                    "x": agent.pos[0],
+                    "y": agent.pos[1],
+                    "state": agent.state,
+                    "light_type": agent.light_type,
+                    "timeToChange": agent.timeToChange,
+                    "traffic_light_states": agent.traffic_light_states
+                }
+                traffic_light_data.append(traffic_light_info)
+        return traffic_light_data

@@ -24,6 +24,21 @@ public class AgentData
     }
 }
 
+public class TrafficLightData {
+    public string id;
+    public float x, y, z;
+    public string state;
+
+    public TrafficLightData(string id, float x, float y, float z, string state)
+    {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.state = state;
+    }
+}
+
 [Serializable]
 
 public class AgentsData
@@ -37,6 +52,7 @@ public class AgentController : MonoBehaviour
 {
     string serverUrl = "http://localhost:8585";
     string getAgentsEndpoint = "/getAgents";
+    string getTrafficLightsEndpoint = "/getTrafficLights";
     string sendConfigEndpoint = "/init";
     string updateEndpoint = "/update";
     AgentsData agentsData;
@@ -60,21 +76,22 @@ public class AgentController : MonoBehaviour
 
         agents = new Dictionary<string, GameObject>();
 
-        floor.transform.localScale = new Vector3((float)width/10, 1, (float)height/10);
-        floor.transform.localPosition = new Vector3((float)width/2-0.5f, 0, (float)height/2-0.5f);
-        
+        floor.transform.localScale = new Vector3((float)width / 10, 1, (float)height / 10);
+        floor.transform.localPosition = new Vector3((float)width / 2 - 0.5f, 0, (float)height / 2 - 0.5f);
+
         timer = timeToUpdate;
 
         StartCoroutine(SendConfiguration());
     }
 
-    private void Update() 
+    private void Update()
     {
-        if(timer < 0)
+        if (timer < 0)
         {
             timer = timeToUpdate;
             updated = false;
             StartCoroutine(UpdateSimulation());
+
         }
 
         if (updated)
@@ -82,7 +99,7 @@ public class AgentController : MonoBehaviour
             timer -= Time.deltaTime;
             dt = 1.0f - (timer / timeToUpdate);
 
-            foreach(var agent in currPositions)
+            foreach (var agent in currPositions)
             {
                 Vector3 currentPosition = agent.Value;
                 currentPosition.y = 0.2f;
@@ -96,9 +113,9 @@ public class AgentController : MonoBehaviour
                 Vector3 interpolated = Vector3.Lerp(previousPosition, currentPosition, dt);
                 Vector3 direction = currentPosition - interpolated;
 
-                Debug.Log($"Update: Agent - direction - {direction}");
+                // Debug.Log($"Update: Agent - direction - {direction}");
                 agents[agent.Key].transform.localPosition = interpolated;
-                if(direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, -90, 0);
+                if (direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, -90, 0);
                 // rotacion en x y z siempre deben ser cero
                 // ponemos en 0 la rotacion en x y z
                 Quaternion currentRotation = agents[agent.Key].transform.rotation;
@@ -107,22 +124,23 @@ public class AgentController : MonoBehaviour
                 Vector3 newEulerAngles = new Vector3(0, currentEulerAngles.y, 0);
                 agents[agent.Key].transform.rotation = Quaternion.Euler(newEulerAngles);
                 // Debug.Log($"Update: Agent - {agent.Key} - Rotation - {agents[agent.Key].transform.rotation}");
-                Debug.Log($"Update: Agent - {agent.Key} - Rotation - {agents[agent.Key].transform.rotation.x}, {agents[agent.Key].transform.rotation.y}, {agents[agent.Key].transform.rotation.z}");
+                // Debug.Log($"Update: Agent - {agent.Key} - Rotation - {agents[agent.Key].transform.rotation.x}, {agents[agent.Key].transform.rotation.y}, {agents[agent.Key].transform.rotation.z}");
                 // Debug.Log($"Update: Agent - {agent.Key} - Rotation - {agents[agent.Key].transform.rotation.eulerAngles.x}, {agents[agent.Key].transform.rotation.eulerAngles.y}, {agents[agent.Key].transform.rotation.eulerAngles.z}");
             }
         }
     }
- 
+
     IEnumerator UpdateSimulation()
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + updateEndpoint);
         yield return www.SendWebRequest();
- 
+
         if (www.result != UnityWebRequest.Result.Success)
             Debug.Log(www.error);
-        else 
+        else
         {
             StartCoroutine(GetAgentsData());
+            StartCoroutine(GetTrafficLightsData());
         }
     }
 
@@ -131,7 +149,7 @@ public class AgentController : MonoBehaviour
         WWWForm form = new WWWForm();
 
         form.AddField("numero_coches_max", NAgents.ToString());
-        
+
         UnityWebRequest www = UnityWebRequest.Post(serverUrl + sendConfigEndpoint, form);
         www.SetRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
@@ -150,84 +168,101 @@ public class AgentController : MonoBehaviour
         }
     }
 
-IEnumerator ActivateAgentWithDelay(GameObject agent, float delay)
-{
-    // Espera el tiempo especificado
-    yield return new WaitForSeconds(delay);
-
-    // Activa el agente
-    agent.SetActive(true);
-}
-
-
-IEnumerator GetAgentsData() 
-{
-    UnityWebRequest www = UnityWebRequest.Get(serverUrl + getAgentsEndpoint);
-    yield return www.SendWebRequest();
- 
-    if (www.result != UnityWebRequest.Result.Success)
+    IEnumerator ActivateAgentWithDelay(GameObject agent, float delay)
     {
-        Debug.Log(www.error);
+        // Espera el tiempo especificado
+        yield return new WaitForSeconds(delay);
+
+        // Activa el agente
+        agent.SetActive(true);
     }
-    else 
+
+
+    IEnumerator GetAgentsData()
     {
-        AgentsData newData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
-        HashSet<string> receivedAgentIds = new HashSet<string>();
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getAgentsEndpoint);
+        yield return www.SendWebRequest();
 
-        foreach (AgentData agentData in newData.positions)
+        if (www.result != UnityWebRequest.Result.Success)
         {
-            receivedAgentIds.Add(agentData.id);
-            
-            Vector3 agentPosition = new Vector3(agentData.x, agentData.z, agentData.y);
+            Debug.Log(www.error);
+        }
+        else
+        {
+            AgentsData newData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
+            HashSet<string> receivedAgentIds = new HashSet<string>();
 
-            if (!agents.ContainsKey(agentData.id))
+            foreach (AgentData agentData in newData.positions)
             {
-                GameObject newAgent = Instantiate(agentPrefab, agentPosition, Quaternion.identity);
-                // newAgent.transform.rotation = Quaternion.Euler(new Vector3(90, 0, 90));
+                receivedAgentIds.Add(agentData.id);
 
-                agents.Add(agentData.id, newAgent);
-                prevPositions.Add(agentData.id, agentPosition);
-                // setActive to false
-                agents[agentData.id].SetActive(false);  
-                // Inicia la coroutine para activar el agente después del retraso
+                Vector3 agentPosition = new Vector3(agentData.x, agentData.z, agentData.y);
 
-            }
-            else
-            {
-                prevPositions[agentData.id] = agents[agentData.id].transform.position;
+                if (!agents.ContainsKey(agentData.id))
+                {
+                    GameObject newAgent = Instantiate(agentPrefab, agentPosition, Quaternion.identity);
+                    // newAgent.transform.rotation = Quaternion.Euler(new Vector3(90, 0, 90));
 
-            }
+                    agents.Add(agentData.id, newAgent);
+                    prevPositions.Add(agentData.id, agentPosition);
+                    // setActive to false
+                    agents[agentData.id].SetActive(false);
+                    // Inicia la coroutine para activar el agente después del retraso
 
-            currPositions[agentData.id] = agentPosition;
-            // si la current position es diferente a la previous position
-            if (currPositions[agentData.id] != prevPositions[agentData.id])
-            {
-                // if not active setActive to true
-                if (!agents[agentData.id].activeSelf) {
-                StartCoroutine(ActivateAgentWithDelay(agents[agentData.id], timeToUpdate));
+                }
+                else
+                {
+                    prevPositions[agentData.id] = agents[agentData.id].transform.position;
+
+                }
+
+                currPositions[agentData.id] = agentPosition;
+                // si la current position es diferente a la previous position
+                if (currPositions[agentData.id] != prevPositions[agentData.id])
+                {
+                    // if not active setActive to true
+                    if (!agents[agentData.id].activeSelf)
+                    {
+                        StartCoroutine(ActivateAgentWithDelay(agents[agentData.id], timeToUpdate));
+                    }
                 }
             }
-        }
 
-        List<string> keysToRemove = new List<string>();
-        foreach (var existingAgent in agents)
-        {
-            if (!receivedAgentIds.Contains(existingAgent.Key))
+            List<string> keysToRemove = new List<string>();
+            foreach (var existingAgent in agents)
             {
-                keysToRemove.Add(existingAgent.Key);
+                if (!receivedAgentIds.Contains(existingAgent.Key))
+                {
+                    keysToRemove.Add(existingAgent.Key);
+                }
             }
-        }
 
-        foreach (var key in keysToRemove)
-        {
-            Destroy(agents[key]);
-            agents.Remove(key);
-            prevPositions.Remove(key);
-            currPositions.Remove(key);
-        }
+            foreach (var key in keysToRemove)
+            {
+                Destroy(agents[key]);
+                agents.Remove(key);
+                prevPositions.Remove(key);
+                currPositions.Remove(key);
+            }
 
-        updated = true;
-        if (!started) started = true;
+            updated = true;
+            if (!started) started = true;
+        }
     }
+
+IEnumerator GetTrafficLightsData() {
+    UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLightsEndpoint);
+    yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            TrafficLightData newData = JsonUtility.FromJson<TrafficLightData>(www.downloadHandler.text);
+            Debug.Log(newData);    
+        }
+
 }
 }

@@ -25,6 +25,17 @@ def get_agents():
     print(f"Agent data retrieved: {agent_data}")
     return jsonify({'positions': agent_data})
 
+@app.route('/getTrafficLights', methods=['GET'])
+def get_traffic_lights():
+    if city_model is None:
+        print("Error: Model not initialized.")
+        return jsonify({"error": "Modelo no inicializado"}), 400
+
+    print("Getting traffic light data.")
+    traffic_light_data = city_model.get_traffic_light_data()
+    print(f"Traffic light data retrieved: {traffic_light_data}")
+    return jsonify({'positions': traffic_light_data})
+
 @app.route('/getObstacles', methods=['GET'])
 def get_obstacles():
     if city_model is None:
