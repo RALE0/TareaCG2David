@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TrafficLightController : MonoBehaviour
 {
-    [SerializeField] private bool isGreen = false;
+    [SerializeField] public bool isGreen = false;
     public GameObject greenLight;
     public GameObject redLight;
 

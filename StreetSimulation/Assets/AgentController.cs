@@ -24,20 +24,28 @@ public class AgentData
     }
 }
 
-public class TrafficLightData {
+public class TrafficLightData
+{
     public string id;
     public float x, y, z;
-    public string state;
+    public bool state;
+    public string lightType;
+    public int timeToChange;
+    public Dictionary<string, bool> trafficLightStates;
 
-    public TrafficLightData(string id, float x, float y, float z, string state)
+    public TrafficLightData(string id, float x, float y, float z, bool state, string lightType, int timeToChange, Dictionary<string, bool> trafficLightStates)
     {
         this.id = id;
         this.x = x;
         this.y = y;
         this.z = z;
         this.state = state;
+        this.lightType = lightType;
+        this.timeToChange = timeToChange;
+        this.trafficLightStates = trafficLightStates;
     }
 }
+
 
 [Serializable]
 
@@ -46,6 +54,14 @@ public class AgentsData
     public List<AgentData> positions;
 
     public AgentsData() => this.positions = new List<AgentData>();
+}
+
+[Serializable]
+public class TrafficLightsData
+{
+    public List<TrafficLightData> positions;
+
+    public TrafficLightsData() => this.positions = new List<TrafficLightData>();
 }
 
 public class AgentController : MonoBehaviour
@@ -61,7 +77,7 @@ public class AgentController : MonoBehaviour
 
     bool updated = false, started = false;
 
-    public GameObject agentPrefab, floor;
+    public GameObject agentPrefab, floor, trafficLightPrefab;
     public int NAgents;
     private int width = 26, height = 26;
     public float timeToUpdate = 5.0f;
@@ -165,6 +181,7 @@ public class AgentController : MonoBehaviour
             Debug.Log("Getting Agents positions");
 
             StartCoroutine(GetAgentsData());
+            StartCoroutine(GetTrafficLightsData());
         }
     }
 
@@ -250,19 +267,56 @@ public class AgentController : MonoBehaviour
         }
     }
 
-IEnumerator GetTrafficLightsData() {
-    UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLightsEndpoint);
-    yield return www.SendWebRequest();
+    IEnumerator GetTrafficLightsData()
+    {
+        UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLightsEndpoint);
+        Debug.Log("[GetTrafficLightsData] Sending request to server...");
+        yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.Log(www.error);
+            Debug.Log("[GetTrafficLightsData] Error: " + www.error);
         }
         else
         {
-            TrafficLightData newData = JsonUtility.FromJson<TrafficLightData>(www.downloadHandler.text);
-            Debug.Log(newData);    
-        }
+            TrafficLightsData newData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
+            HashSet<string> receivedTrafficLightIds = new HashSet<string>();
 
-}
+            Debug.Log($"[GetTrafficLightsData] Processing traffic lights data...");
+            Debug.Log($"[GetTrafficLightsData] Received {newData.positions.Count} traffic lights.");
+
+            foreach (TrafficLightData trafficLightData in newData.positions)
+            {
+                Debug.Log($"[GetTrafficLightsData] Processing traffic light ID: {trafficLightData.id}");
+                receivedTrafficLightIds.Add(trafficLightData.id);
+
+                Vector3 trafficLightPosition = new Vector3(trafficLightData.x, trafficLightData.z, trafficLightData.y);
+                Debug.Log($"[GetTrafficLightsData] Position for traffic light ID {trafficLightData.id}: {trafficLightPosition}");
+
+                Debug.Log($"Light Type: {trafficLightData.lightType}");
+                Debug.Log($"Time to Change: {trafficLightData.timeToChange}");
+                foreach (var state in trafficLightData.trafficLightStates)
+                {
+                    Debug.Log($"State {state.Key}: {state.Value}");
+                }
+
+                if (!agents.ContainsKey(trafficLightData.id))
+                {
+                    Debug.Log($"[GetTrafficLightsData] Creating new traffic light for ID {trafficLightData.id}");
+                    GameObject newTrafficLight = Instantiate(trafficLightPrefab, trafficLightPosition, Quaternion.identity);
+                    agents.Add(trafficLightData.id, newTrafficLight);
+                }
+                else
+                {
+                    Debug.Log($"[GetTrafficLightsData] Updating traffic light for ID {trafficLightData.id}");
+                    // get the traffic light and set the state
+                    bool isGreen = trafficLightData.state;
+                    agents[trafficLightData.id].GetComponent<TrafficLightController>().isGreen = isGreen;
+                    Debug.Log($"[GetTrafficLightsData] Traffic light ID {trafficLightData.id} is now {(isGreen ? "green" : "not green")}");
+                }
+            }
+            Debug.Log("[GetTrafficLightsData] Traffic lights data processing complete.");
+        }
+    }
+
 }
