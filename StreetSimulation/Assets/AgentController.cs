@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+// import for text mesh pro
+using TMPro;
 
 [Serializable]
 public class AgentData
@@ -34,17 +36,6 @@ public class AgentsData
 
     public AgentsData() => this.positions = new List<AgentData>();
 }
-
-// getTrafficLights regresara un arreglo de:
-//                 {
-//                     "id": agent.unique_id,
-//                     "x": agent.pos[0],
-//                     "y": agent.pos[1],
-//                     "state": agent.state,
-//                     "light_type": agent.light_type,
-//                     "timeToChange": agent.timeToChange,
-//                     "traffic_light_states": agent.traffic_light_states
-//                 }
 
 [Serializable]
 public class TrafficLightData
@@ -97,6 +88,10 @@ public class AgentController : MonoBehaviour
     public float timeToUpdate = 5.0f;
     private float timer, dt;
 
+    // we declare a public text for count
+    public TextMeshProUGUI countText;
+    
+
     void Start()
     {
         agentsData = new AgentsData();
@@ -134,28 +129,19 @@ public class AgentController : MonoBehaviour
                 Vector3 currentPosition = agent.Value;
                 currentPosition.y = 0.2f;
 
-                // Debug.Log($"Update: Agent - {agent.Key} - Position - {currentPosition}");
-                // Debug.Log($"Update: Agent - {agent.Key} - Position - {currentPosition.x}, {currentPosition.y}, {currentPosition.z}");
-                // Debug.Log($"Current height: {height} - Current width: {width}");
-
                 Vector3 previousPosition = prevPositions[agent.Key];
 
                 Vector3 interpolated = Vector3.Lerp(previousPosition, currentPosition, dt);
                 Vector3 direction = currentPosition - interpolated;
 
-                // Debug.Log($"Update: Agent - direction - {direction}");
                 agents[agent.Key].transform.localPosition = interpolated;
                 if (direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, -90, 0);
-                // rotacion en x y z siempre deben ser cero
-                // ponemos en 0 la rotacion en x y z
+                
                 Quaternion currentRotation = agents[agent.Key].transform.rotation;
                 Vector3 currentEulerAngles = currentRotation.eulerAngles;
-                // Establecer la rotación en X y Z a 0, manteniendo la rotación en Y
+                
                 Vector3 newEulerAngles = new Vector3(0, currentEulerAngles.y, 0);
                 agents[agent.Key].transform.rotation = Quaternion.Euler(newEulerAngles);
-                // Debug.Log($"Update: Agent - {agent.Key} - Rotation - {agents[agent.Key].transform.rotation}");
-                // Debug.Log($"Update: Agent - {agent.Key} - Rotation - {agents[agent.Key].transform.rotation.x}, {agents[agent.Key].transform.rotation.y}, {agents[agent.Key].transform.rotation.z}");
-                // Debug.Log($"Update: Agent - {agent.Key} - Rotation - {agents[agent.Key].transform.rotation.eulerAngles.x}, {agents[agent.Key].transform.rotation.eulerAngles.y}, {agents[agent.Key].transform.rotation.eulerAngles.z}");
             }
         }
     }
@@ -201,10 +187,7 @@ public class AgentController : MonoBehaviour
 
     IEnumerator ActivateAgentWithDelay(GameObject agent, float delay)
     {
-        // Espera el tiempo especificado
         yield return new WaitForSeconds(delay);
-
-        // Activa el agente
         agent.SetActive(true);
     }
 
@@ -223,6 +206,9 @@ public class AgentController : MonoBehaviour
             AgentsData newData = JsonUtility.FromJson<AgentsData>(www.downloadHandler.text);
             HashSet<string> receivedAgentIds = new HashSet<string>();
 
+            // set text to
+            countText.text = "Cars: " + newData.positions.Count.ToString();
+
             foreach (AgentData agentData in newData.positions)
             {
                 receivedAgentIds.Add(agentData.id);
@@ -232,14 +218,10 @@ public class AgentController : MonoBehaviour
                 if (!agents.ContainsKey(agentData.id))
                 {
                     GameObject newAgent = Instantiate(agentPrefab, agentPosition, Quaternion.identity);
-                    // newAgent.transform.rotation = Quaternion.Euler(new Vector3(90, 0, 90));
 
                     agents.Add(agentData.id, newAgent);
                     prevPositions.Add(agentData.id, agentPosition);
-                    // setActive to false
                     agents[agentData.id].SetActive(false);
-                    // Inicia la coroutine para activar el agente después del retraso
-
                 }
                 else
                 {
@@ -248,6 +230,7 @@ public class AgentController : MonoBehaviour
                 }
 
                 currPositions[agentData.id] = agentPosition;
+
                 // si la current position es diferente a la previous position
                 if (currPositions[agentData.id] != prevPositions[agentData.id])
                 {
@@ -289,7 +272,6 @@ public class AgentController : MonoBehaviour
     IEnumerator GetTrafficLightsData()
     {
         UnityWebRequest www = UnityWebRequest.Get(serverUrl + getTrafficLightsEndpoint);
-        Debug.Log("[GetTrafficLightsData] Sending request to server...");
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
@@ -298,13 +280,8 @@ public class AgentController : MonoBehaviour
         }
         else
         {
-            Debug.Log("[GetTrafficLightsData] Received response from server.");
-            Debug.Log($"[GetTrafficLightsData] Response: {www.downloadHandler.text}");
             TrafficLightsData newData = JsonUtility.FromJson<TrafficLightsData>(www.downloadHandler.text);
             HashSet<string> receivedTrafficLightIds = new HashSet<string>();
-
-            Debug.Log($"[GetTrafficLightsData] Processing traffic lights data...");
-            Debug.Log($"[GetTrafficLightsData] Received {newData.positions.Count} traffic lights.");
 
             foreach (TrafficLightData trafficLightData in newData.positions)
             {
@@ -313,20 +290,15 @@ public class AgentController : MonoBehaviour
 
                 if (!agents.ContainsKey(trafficLightData.id))
                 {
-                    Debug.Log($"[GetTrafficLightsData] Creating new traffic light for ID {trafficLightData.id}");
                     GameObject newTrafficLight = Instantiate(trafficLightPrefab, new Vector3(trafficLightData.x, trafficLightData.z, trafficLightData.y), Quaternion.identity);
                     agents.Add(trafficLightData.id, newTrafficLight);
                 }
                 else
                 {
-                    Debug.Log($"[GetTrafficLightsData] Updating traffic light for ID {trafficLightData.id}");
                     // get the traffic light and set the state
                     agents[trafficLightData.id].GetComponent<TrafficLightController>().isGreen = trafficLightData.state;
-                    Debug.Log($"[GetTrafficLightsData] Traffic light ID {trafficLightData.id} is now {(trafficLightData.state ? "green" : "not green")}");
                 }
             }
-            Debug.Log("[GetTrafficLightsData] Traffic lights data processing complete.");
         }
     }
-
 }
