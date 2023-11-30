@@ -105,7 +105,9 @@ class CityModel(Model):
     def step(self):
         '''Advance the model by one step.'''
         self.schedule.step()
-        self.step_count += 1  
+        print ("STEP: ", self.schedule.steps)
+        print ("ARRIVED CARS: ", self.arrived_cars)
+        self.step_count += 1 
 
         if self.step_count % 3 == 0:
             self.initialize_cars()
@@ -115,7 +117,7 @@ class CityModel(Model):
             post(self.arrived_cars)
             print("POSTED NUMBER OF CARS")
             
-        if self.step_count == 1000:
+        if self.step_count == 1000 or self.schedule.steps == 1000:
             self.running = False
         
     
@@ -155,7 +157,7 @@ def post(arrived_cars):
     data = {
         "year" : 2023,
         "classroom" : 302,
-        "name" : "Vieyra y Cantú",
+        "name" : "Vieyra y Cantú - Compu 2",
         "num_cars": arrived_cars
     }
 

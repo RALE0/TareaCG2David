@@ -22,7 +22,7 @@ def get_agents():
 
     print("Getting agent data.")
     agent_data = city_model.get_agent_data()
-    print(f"Agent data retrieved: {agent_data}")
+    # print(f"Agent data retrieved: {agent_data}")
     return jsonify({'positions': agent_data})
 
 @app.route('/getTrafficLights', methods=['GET'])
@@ -33,7 +33,7 @@ def get_traffic_lights():
 
     print("Getting traffic light data.")
     traffic_light_data = city_model.get_traffic_light_data()
-    print(f"Traffic light data retrieved: {traffic_light_data}")
+    # print(f"Traffic light data retrieved: {traffic_light_data}")
     return jsonify({'positions': traffic_light_data})
 
 @app.route('/getObstacles', methods=['GET'])
@@ -44,7 +44,7 @@ def get_obstacles():
 
     print("Getting obstacle data.")
     obstacle_data = city_model.get_obstacle_data()
-    print(f"Obstacle data retrieved: {obstacle_data}")
+    # print(f"Obstacle data retrieved: {obstacle_data}")
     return jsonify({'positions': obstacle_data})
 
 @app.route('/update', methods=['GET'])

@@ -70,13 +70,13 @@ def agent_portrayal(agent):
 width = 0
 height = 0
 
-with open('trafficBase/V2/city_files/2022_base.txt') as baseFile:
+with open('trafficBase/V2/city_files/2023_base.txt') as baseFile:
     lines = baseFile.readlines()
     width = len(lines[0])-1
     height = len(lines)
 
 # 5 parameters: name, default value, min value, max value, step
-model_params = {"numero_coches_max": Slider("Numero de coches maximo", 1, 1, 1000, 1)}
+model_params = {"numero_coches_max": Slider("Numero de coches maximo", 500, 1, 1000, 1)}
 
 print(width, height)
 grid = CanvasGrid(agent_portrayal, width, height, 500, 500)

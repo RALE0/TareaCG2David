@@ -276,10 +276,10 @@ class Car(Agent):
         start_node_type = self.determine_node_type(self.model.grid.get_cell_list_contents([start]))
         end_node_type = self.determine_node_type(self.model.grid.get_cell_list_contents([end]))
         
-        print("Start Node Type:", start_node_type)
-        print("End Node Type:", end_node_type)
-        print("Start Node:", start)
-        print("End Node:", end)
+        # print("Start Node Type:", start_node_type)
+        # print("End Node Type:", end_node_type)
+        # print("Start Node:", start)
+        # print("End Node:", end)
 
         try:
             path = nx.astar_path(G, start, end, heuristic=self.heuristic)
