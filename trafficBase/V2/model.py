@@ -107,12 +107,16 @@ class CityModel(Model):
         self.schedule.step()
         self.step_count += 1  
 
-        self.initialize_cars()
+        if self.schedule.steps % 3 == 0:
+            self.initialize_car()
         
         if self.schedule.steps % 100 == 0:
             print ("STEP: ", self.schedule.steps)
             post(self.arrived_cars)
             print("POSTED NUMBER OF CARS")
+            
+        if self.step_count == 1000:
+            self.running = False
         
     
     def get_agent_data(self):
@@ -146,7 +150,7 @@ class CityModel(Model):
 
 def post(arrived_cars):
     url = "http://52.1.3.19:8585/api/"
-    endpoint = "validate_attempt"
+    endpoint = "attempts"
 
     data = {
         "year" : 2023,
