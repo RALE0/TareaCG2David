@@ -8,7 +8,7 @@ city_model = None
 def init_model():
     global city_model
     print("Received request to initialize model.")
-    numero_coches_max = int(request.form.get('numero_coches_max', 10))
+    numero_coches_max = int(request.form.get('numero_coches_max', 1000))
     print(f"Initializing model with max number of cars: {numero_coches_max}")
     city_model = CityModel(numero_coches_max)
     print("Model initialized successfully.")
