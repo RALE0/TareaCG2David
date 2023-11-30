@@ -9,12 +9,13 @@ import requests
 class CityModel(Model):
     def __init__(self, numero_coches_max):
         # Load the map dictionary. The dictionary maps the characters in the map file to the corresponding agent.
-        dataDictionary = json.load(open("city_files/mapDictionary.json"))
+        dataDictionary = json.load(open("trafficBase/V2/city_files/mapDictionary.json"))
 
         self.traffic_lights = []
 
         # Load the map file. The map file is a text file where each character represents an agent.
-        with open('city_files/2023_base.txt') as baseFile:
+        with open('trafficBase/V2/city_files/2023_base.txt') as baseFile:
+            print ("Loading map file...")
             lines = baseFile.readlines()
             self.width = len(lines[0])-1
             self.height = len(lines)
