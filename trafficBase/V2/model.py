@@ -107,8 +107,8 @@ class CityModel(Model):
         self.schedule.step()
         self.step_count += 1  
 
-        if self.schedule.steps % 3 == 0:
-            self.initialize_car()
+        if self.step_count % 3 == 0:
+            self.initialize_cars()
         
         if self.schedule.steps % 100 == 0:
             print ("STEP: ", self.schedule.steps)
