@@ -7,7 +7,7 @@ class CarTextElement(TextElement):
         pass
 
     def render(self, model):
-        return "Carros: " + str(model.num_agents)
+        return "Carros: " + str(model.num_cars)
         
 def agent_portrayal(agent):
     if agent is None: return
@@ -70,7 +70,7 @@ def agent_portrayal(agent):
 width = 0
 height = 0
 
-with open('city_files/2022_base.txt') as baseFile:
+with open('trafficBase/V2/city_files/2022_base.txt') as baseFile:
     lines = baseFile.readlines()
     width = len(lines[0])-1
     height = len(lines)
