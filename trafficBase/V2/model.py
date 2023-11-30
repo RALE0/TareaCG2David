@@ -150,7 +150,7 @@ def post(arrived_cars):
 
     data = {
         "year" : 2023,
-        "classroom" : 301,
+        "classroom" : 302,
         "name" : "Vieyra y Cantú",
         "num_cars": arrived_cars
     }
