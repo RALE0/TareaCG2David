@@ -4,6 +4,7 @@ from mesa.time import RandomActivation
 from mesa.space import MultiGrid
 from agent import *
 import json
+import requests
 
 class CityModel(Model):
     def __init__(self, numero_coches_max):
@@ -53,12 +54,13 @@ class CityModel(Model):
                         self.D_locations.append((c, self.height - r - 1))
         
         
-        self.num_agents = 0
+        self.num_cars = 0
         self.id_count = 0
         self.numero_coches_max = numero_coches_max
         self.running = True
         self.step_count = 0
         self.used_I_locations = []
+        self.arrived_cars = 0
         self.initialize_car()
 
     def initialize_car(self):
@@ -75,15 +77,15 @@ class CityModel(Model):
             car_agent = Car(1000 + self.id_count, self, random_D_location)  
             self.grid.place_agent(car_agent, random_I_location)
             self.schedule.add(car_agent)
-            self.num_agents += 1
+            self.num_cars += 1
             self.id_count += 1
-            print("NUMBER OF AGENTS", self.num_agents)
+            print("NUMBER OF CARS", self.num_cars)
 
     def initialize_cars(self):
         # Itera sobre todas las ubicaciones de inicio
         for i_location in self.I_locations:
             # Verifica si ya hay suficientes agentes
-            if self.num_agents >= self.numero_coches_max:
+            if self.num_cars >= self.numero_coches_max:
                 break
 
             # Obtener el contenido de la celda en la ubicación actual
@@ -96,9 +98,9 @@ class CityModel(Model):
                 car_agent = Car(1000 + self.id_count, self, random_D_location)  
                 self.grid.place_agent(car_agent, i_location)
                 self.schedule.add(car_agent)
-                self.num_agents += 1
+                self.num_cars += 1
                 self.id_count += 1
-                print("NUMBER OF AGENTS", self.num_agents)
+                print("NUMBER OF CARS", self.num_cars)
 
     def step(self):
         '''Advance the model by one step.'''
@@ -106,6 +108,10 @@ class CityModel(Model):
         self.step_count += 1  
 
         self.initialize_cars()
+        
+        if self.schedule.steps % 100 == 0:
+            post(self.num_cars)
+        
     
     def get_agent_data(self):
         agent_data = []
@@ -135,3 +141,23 @@ class CityModel(Model):
                 }
                 traffic_light_data.append(traffic_light_info)
         return traffic_light_data
+
+def post(arrived_cars):
+    url = "http://localhost:5000/api/"
+    endpoint = "validate_attempt"
+
+    data = {
+        "year" : 2023,
+        "classroom" : 301,
+        "name" : "Vieyra y Cantú",
+        "num_cars": arrived_cars
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url+endpoint, data=json.dumps(data), headers=headers)
+
+    print("Request " + "successful" if response.status_code == 200 else "failed", "Status code:", response.status_code)
+    print("Response:", response.json())
