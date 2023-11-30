@@ -14,6 +14,7 @@ public class CityMaker : MonoBehaviour
     void Start()
     {
         MakeTiles(layout.text);
+        Debug.Log("City successfully created");
     }
 
     // Update is called once per frame

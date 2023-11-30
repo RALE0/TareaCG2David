@@ -54,7 +54,7 @@ public class ChangeCamera : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            Debug.Log("Switching to up camera");
+            Debug.Log("Switching to front camera");
             m_FrontCamera.enabled = true;
             m_MainCamera.enabled = false;
             m_RightCamera.enabled = false;
@@ -64,7 +64,7 @@ public class ChangeCamera : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.B))
         {
-            Debug.Log("Switching to down camera");
+            Debug.Log("Switching to back camera");
             m_MainCamera.enabled = false;
             m_RightCamera.enabled = false;
             m_FrontCamera.enabled = false;
