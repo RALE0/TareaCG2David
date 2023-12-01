@@ -8,9 +8,8 @@ import requests
 
 class CityModel(Model):
     def __init__(self, numero_coches_max):
-        # Load the map dictionary. The dictionary maps the characters in the map file to the corresponding agent.
+        # Get the data dictionary from the json file.
         dataDictionary = json.load(open("trafficBase/V2/city_files/mapDictionary.json"))
-
         self.traffic_lights = []
 
         # Load the map file. The map file is a text file where each character represents an agent.
@@ -36,12 +35,12 @@ class CityModel(Model):
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.I_locations.append((c, self.height - r - 1))
                     elif col == "S":
-                        agent = Traffic_Light(f"tl_S{r*self.width+c}", self, False, int(dataDictionary[col]), "S")
+                        agent = TrafficLight(f"tl_S{r*self.width+c}", self, False, int(dataDictionary[col]), "S")
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
                         self.traffic_lights.append(agent)
                     elif col == "s":
-                        agent = Traffic_Light(f"tl_s{r*self.width+c}", self, True, int(dataDictionary[col]), "s")
+                        agent = TrafficLight(f"tl_s{r*self.width+c}", self, True, int(dataDictionary[col]), "s")
                         self.grid.place_agent(agent, (c, self.height - r - 1))
                         self.schedule.add(agent)
                         self.traffic_lights.append(agent)
@@ -137,7 +136,7 @@ class CityModel(Model):
     def get_traffic_light_data(self):
         traffic_light_data = []
         for agent in self.schedule.agents:
-            if isinstance(agent, Traffic_Light):
+            if isinstance(agent, TrafficLight):
                 traffic_light_info = {
                     "id": agent.unique_id,
                     "x": agent.pos[0],

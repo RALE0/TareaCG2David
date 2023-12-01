@@ -1,314 +1,243 @@
 from mesa import Agent
 import networkx as nx
-import matplotlib.pyplot as plt
 
+# Definición de la clase Car (Coche)
 class Car(Agent):
     def __init__(self, unique_id, model, destination_pos):
         super().__init__(unique_id, model)
-        self.destination_pos = destination_pos  # The destination position for the car  
-        self.path = None  # This will store the path the car needs to follow
-        self.dx, self.dy = 0, 0  # The direction the car is moving in
+        self.destination_pos = destination_pos  # La posición del nodo de destino del coche
+        self.path = None  # El camino que el coche tomará para llegar a su destino
+        self.dx, self.dy = 0, 0  # La dirección en la que se mueve el coche
 
-    def plot_graph(self, graph):
-        pos = {node: (node[0], -node[1]) for node in graph.nodes}  # Flip y-axis for visualization
-        nx.draw(graph, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_color='black')
-        plt.show()
-
-    def determine_node_type(self, cell_contents):
-        node_type = ' '  # Default node type (empty or non-blocking)
-
+    # Función para determinar el tipo de nodo en una celda
+    def defineNodeType(self, cell_contents):
+        # Inicialmente se establece el tipo de nodo como espacio vacío (' ')
+        node_type = ' '  
         for agent in cell_contents:
             if isinstance(agent, Obstacle):
-                return '#'  
+                return '#'  # Si hay un obstáculo en la celda, el nodo es una pared ('#')
             elif isinstance(agent, Road):
-                
                 if agent.direction == "Right":
-                    return '>'
+                    return '>'  # Si hay una carretera hacia la derecha, el nodo es una flecha apuntando a la derecha ('>')
                 elif agent.direction == "Left":
-                    return '<'
+                    return '<'  # Si hay una carretera hacia la izquierda, el nodo es una flecha apuntando a la izquierda ('<')
                 elif agent.direction == "Up":
-                    return '^'
+                    return '^'  # Si hay una carretera hacia arriba, el nodo es una flecha apuntando hacia arriba ('^')
                 elif agent.direction == "Down":
-                    return 'v'
+                    return 'v'  # Si hay una carretera hacia abajo, el nodo es una flecha apuntando hacia abajo ('v')
             elif isinstance(agent, Initialization):
-                return "I"
+                return "I"  # Si hay una posición inicial en la celda, el nodo es una 'I'
             elif isinstance(agent, Destination):
-                return "D"
-            elif isinstance(agent, Traffic_Light):
+                return "D"  # Si hay un destino en la celda, el nodo es una 'D'
+            elif isinstance(agent, TrafficLight):
                 if agent.unique_id.startswith("tl_S"):
-                    node_type = 'S'  
+                    node_type = 'S'  # Si hay un semáforo de tipo 'S', el nodo es una 'S'
                 elif agent.unique_id.startswith("tl_s"):
-                    node_type = 's'
-
+                    node_type = 's'  # Si hay un semáforo de tipo 's', el nodo es una 's'
         return node_type
-    
-    def is_within_bounds(x, y, width, height):
-        return 0 <= x < width and 0 <= y < height
-    
-    def create_graph(self):
-        grid = self.model.grid
 
+    # Función para crear un grafo basado en la cuadrícula
+    def GraphMaker(self):
+        grid = self.model.grid
         G = nx.DiGraph()
         rows, cols = grid.height, grid.width
 
         for y in range(rows):
             for x in range(cols):
-                
                 cell_contents = grid.get_cell_list_contents([(x, y)])
-                node = self.determine_node_type(cell_contents)
-                
-
+                node = self.defineNodeType(cell_contents)
                 if node == '>':
-                    # Right to s, D, >, I
+                    # Conexión hacia la derecha (>)
                     if x + 1 < cols:
                         right_cell_contents = grid.get_cell_list_contents([(x + 1, y)])
-                        right_node = self.determine_node_type(right_cell_contents)
+                        right_node = self.defineNodeType(right_cell_contents)
                         if right_node in ['s', 'D', '>', 'I','^' ]:
                             G.add_edge((x, y), (x + 1, y))
-
-                    # Up to ^, D
+                    # Conexión hacia arriba (^) si es posible
                     if y + 1 < rows:
                         up_cell_contents = grid.get_cell_list_contents([(x, y + 1)])
-                        up_node = self.determine_node_type(up_cell_contents)
+                        up_node = self.defineNodeType(up_cell_contents)
                         if up_node in ['^', 'D']:
                             G.add_edge((x, y), (x, y + 1))
-
+                    # Conexión hacia abajo (v) si es posible
                     if y - 1 > 0:
                         up_cell_contents = grid.get_cell_list_contents([(x, y - 1)])
-                        up_node = self.determine_node_type(up_cell_contents)
+                        up_node = self.defineNodeType(up_cell_contents)
                         if up_node in ['v', 'D', "I"]:
                             G.add_edge((x, y), (x, y - 1))
-
-                    # Up-right to >
+                    # Conexión hacia arriba-derecha (>) si es posible
                     if y - 1 >= 0 and x + 1 < cols:
                         up_right_cell_contents = grid.get_cell_list_contents([(x + 1, y - 1)])
-                        up_right_node = self.determine_node_type(up_right_cell_contents)
+                        up_right_node = self.defineNodeType(up_right_cell_contents)
                         if up_right_node == '>':
                             G.add_edge((x, y), (x + 1, y - 1))
-
-                    # Up-left to >
+                    # Conexión hacia arriba-izquierda (>) si es posible
                     if y + 1 < rows and x + 1 < cols:
                         up_left_cell_contents = grid.get_cell_list_contents([(x + 1, y + 1)])
-                        up_left_node = self.determine_node_type(up_left_cell_contents)
+                        up_left_node = self.defineNodeType(up_left_cell_contents)
                         if up_left_node == '>':
                             G.add_edge((x, y), (x + 1, y + 1))
 
-                # Check for '<'
                 if node == '<':
-                    # Left to s, D, <, I
                     if x - 1 >= 0:
                         left_cell_contents = grid.get_cell_list_contents([(x - 1, y)])
-                        left_node = self.determine_node_type(left_cell_contents)
+                        left_node = self.defineNodeType(left_cell_contents)
                         if left_node in ['s', 'D', '<', 'I', "v"]:
                             G.add_edge((x, y), (x - 1, y))
-
-                    # Up to ^, D
                     if y + 1 < rows:
                         up_cell_contents = grid.get_cell_list_contents([(x, y + 1)])
-                        up_node = self.determine_node_type(up_cell_contents)
+                        up_node = self.defineNodeType(up_cell_contents)
                         if up_node in ['^', 'D']:
                             G.add_edge((x, y), (x, y + 1))
-                    
                     if y - 1 > 0:
                         up_cell_contents = grid.get_cell_list_contents([(x, y - 1)])
-                        up_node = self.determine_node_type(up_cell_contents)
+                        up_node = self.defineNodeType(up_cell_contents)
                         if up_node in ['v', 'D']:
                             G.add_edge((x, y), (x, y - 1))
-
-                    # Down-left to <
                     if y + 1 < rows and x - 1 > 0:
                         down_left_cell_contents = grid.get_cell_list_contents([(x - 1, y + 1)])
-                        down_left_node = self.determine_node_type(down_left_cell_contents)
+                        down_left_node = self.defineNodeType(down_left_cell_contents)
                         if down_left_node == '<':
                             G.add_edge((x, y), (x - 1, y + 1))
-
-                    # Down-right to <
                     if y - 1 > 0 and x - 1 > 0:
                         down_right_cell_contents = grid.get_cell_list_contents([(x - 1, y - 1)])
-                        down_right_node = self.determine_node_type(down_right_cell_contents)
+                        down_right_node = self.defineNodeType(down_right_cell_contents)
                         if down_right_node == '<':
                             G.add_edge((x, y), (x - 1, y - 1))
-
-                # Check for '^'
+                            
                 if node == '^':
-                    # Up to ^, D, I, S
                     if y + 1 < rows:
                         up_cell_contents = grid.get_cell_list_contents([(x, y + 1)])
-                        up_node = self.determine_node_type(up_cell_contents)
+                        up_node = self.defineNodeType(up_cell_contents)
                         if up_node in ['^', 'D', 'I', 'S', "<", ">"]:
                             G.add_edge((x, y), (x, y + 1))
-
-                    # Left to D, <, I
                     if x - 1 > 0:
                         left_cell_contents = grid.get_cell_list_contents([(x - 1, y)])
-                        left_node = self.determine_node_type(left_cell_contents)
+                        left_node = self.defineNodeType(left_cell_contents)
                         if left_node in ['D', '<', 'I']:
                             G.add_edge((x, y), (x - 1, y))
-
-                    # Right to D, >, I
                     if x + 1 < cols:
                         right_cell_contents = grid.get_cell_list_contents([(x + 1, y)])
-                        right_node = self.determine_node_type(right_cell_contents)
+                        right_node = self.defineNodeType(right_cell_contents)
                         if right_node in ['D', '>', 'I']:
                             G.add_edge((x, y), (x + 1, y))
-
-                    # Up-left to ^
                     if y + 1  < rows and x + 1 < cols:
                         up_left_cell_contents = grid.get_cell_list_contents([(x + 1, y + 1)])
-                        up_left_node = self.determine_node_type(up_left_cell_contents)
+                        up_left_node = self.defineNodeType(up_left_cell_contents)
                         if up_left_node == '^':
                             G.add_edge((x, y), (x + 1, y + 1))
-
-                    # Down-left to ^
                     if y + 1 < rows and x - 1 > 0:
                         down_left_cell_contents = grid.get_cell_list_contents([(x - 1, y + 1)])
-                        down_left_node = self.determine_node_type(down_left_cell_contents)
+                        down_left_node = self.defineNodeType(down_left_cell_contents)
                         if down_left_node == '^':
                             G.add_edge((x, y), (x - 1, y + 1))
 
-
-
                 if node == 'v':
-                    # Down to v, D, I, S
                     if y - 1 > 0:
                         down_cell_contents = grid.get_cell_list_contents([(x, y - 1)])
-                        down_node = self.determine_node_type(down_cell_contents)
+                        down_node = self.defineNodeType(down_cell_contents)
                         if down_node in ['v', 'D', 'I', 'S', ">", "<"]:
                             G.add_edge((x, y), (x, y - 1))
-
-                    # Right to >, I, D
                     if x + 1 < cols:
                         right_cell_contents = grid.get_cell_list_contents([(x + 1, y)])
-                        right_node = self.determine_node_type(right_cell_contents)
+                        right_node = self.defineNodeType(right_cell_contents)
                         if right_node in ['>', 'I', 'D']:
                             G.add_edge((x, y), (x + 1, y))
-
-                    # Left to <, I, D
                     if x - 1 > 0:
                         left_cell_contents = grid.get_cell_list_contents([(x - 1, y)])
-                        left_node = self.determine_node_type(left_cell_contents)
+                        left_node = self.defineNodeType(left_cell_contents)
                         if left_node in ['<', 'I', 'D']:
                             G.add_edge((x, y), (x - 1, y))
                     
                     if y - 1 > 0 and x - 1 >= 0:
                         left_cell_contents = grid.get_cell_list_contents([(x - 1, y-1)])
-                        left_node = self.determine_node_type(left_cell_contents)
+                        left_node = self.defineNodeType(left_cell_contents)
                         if left_node == 'v':
                             G.add_edge((x, y), (x - 1, y-1))
-
                     if y - 1 > 0 and x + 1 < cols:
                         left_cell_contents = grid.get_cell_list_contents([(x + 1, y-1)])
-                        left_node = self.determine_node_type(left_cell_contents)
+                        left_node = self.defineNodeType(left_cell_contents)
                         if left_node == 'v':
                             G.add_edge((x, y), (x + 1, y-1))
 
-
-                # Check for 'S'
                 if node == 'S':
-                    # Down to v
                     if y - 1 > 0:
                         down_cell_contents = grid.get_cell_list_contents([(x, y - 1)])
-                        down_node = self.determine_node_type(down_cell_contents)
+                        down_node = self.defineNodeType(down_cell_contents)
                         if down_node in ['v', ">"]:
                             G.add_edge((x, y), (x, y - 1))
-
-                    # Up to ^
                     if y + 1 < rows:
                         up_cell_contents = grid.get_cell_list_contents([(x, y + 1)])
-                        up_node = self.determine_node_type(up_cell_contents)
+                        up_node = self.defineNodeType(up_cell_contents)
                         if up_node in ['^', "<"]:
                             G.add_edge((x, y), (x, y + 1))
-
-                # Check for 's'
                 if node == 's':
-                    # Right to >
                     if x + 1 < cols:
                         right_cell_contents = grid.get_cell_list_contents([(x + 1, y)])
-                        right_node = self.determine_node_type(right_cell_contents)
+                        right_node = self.defineNodeType(right_cell_contents)
                         if right_node in ['>', '^', "v"]:
                             G.add_edge((x, y), (x + 1, y))
-
-                    # Left to <
                     if x - 1 > 0:
                         left_cell_contents = grid.get_cell_list_contents([(x - 1, y)])
-                        left_node = self.determine_node_type(left_cell_contents)
+                        left_node = self.defineNodeType(left_cell_contents)
                         if left_node in  ['<', '^', "v"]:
                             G.add_edge((x, y), (x - 1, y))
 
-                # Check for 'I'
                 if node == 'I':
-                    # Up to ^
                     if y + 1 < rows:
                         up_cell_contents = grid.get_cell_list_contents([(x, y + 1)])
-                        up_node = self.determine_node_type(up_cell_contents)
+                        up_node = self.defineNodeType(up_cell_contents)
                         if up_node == '^':
                             G.add_edge((x, y), (x, y + 1))
-
-                    # Down to v
                     if y - 1 > 0:
                         down_cell_contents = grid.get_cell_list_contents([(x, y - 1)])
-                        down_node = self.determine_node_type(down_cell_contents)
+                        down_node = self.defineNodeType(down_cell_contents)
                         if down_node == 'v':
                             G.add_edge((x, y), (x, y - 1))
-
-                    # Left to <
                     if x - 1 > 0:
                         left_cell_contents = grid.get_cell_list_contents([(x - 1, y)])
-                        left_node = self.determine_node_type(left_cell_contents)
+                        left_node = self.defineNodeType(left_cell_contents)
                         if left_node == '<':
                             G.add_edge((x, y), (x - 1, y))
-
-                    # Right to >
                     if x + 1 < cols:
                         right_cell_contents = grid.get_cell_list_contents([(x + 1, y)])
-                        right_node = self.determine_node_type(right_cell_contents)
+                        right_node = self.defineNodeType(right_cell_contents)
                         if right_node == '>':
                             G.add_edge((x, y), (x + 1, y))
-
         return G
-    
-    def print_adjacency_matrix(self, G):
-        adjacency_matrix = nx.adjacency_matrix(G).todense()
-        print(adjacency_matrix)
 
-    def find_path(self, start, end):
-        G = self.create_graph()
-        start_node_type = self.determine_node_type(self.model.grid.get_cell_list_contents([start]))
-        end_node_type = self.determine_node_type(self.model.grid.get_cell_list_contents([end]))
-        
-        # print("Start Node Type:", start_node_type)
-        # print("End Node Type:", end_node_type)
-        # print("Start Node:", start)
-        # print("End Node:", end)
-
+    # Función para encontrar el camino utilizando A* en el grafo
+    def createPath(self, start, end):
+        G = self.GraphMaker()
+        start_node_type = self.defineNodeType(self.model.grid.get_cell_list_contents([start]))
+        end_node_type = self.defineNodeType(self.model.grid.get_cell_list_contents([end]))
         try:
-            path = nx.astar_path(G, start, end, heuristic=self.heuristic)
+            path = nx.astar_path(G, start, end, heuristic=self.euclideanHeuristic)
             print(path)
             return path
         except nx.NetworkXNoPath:
-            print("No path found in the graph.")
+            print("No path found.")
             return []
 
-    def heuristic(self, a, b):
-        # Simple Euclidean distance
+    def euclideanHeuristic(self, a, b):
+        # Calcula la distancia euclidiana entre dos nodos
         return ((a[0] - b[0])**2 + (a[1] - b[1])**2)**0.5
     
-    def can_move_to(self, next_position):
+    def availableMove(self, next_position):
         cell_contents = self.model.grid.get_cell_list_contents(next_position)
         for agent in cell_contents:
-            if isinstance(agent, Traffic_Light) and not agent.state:
+            if isinstance(agent, TrafficLight) and not agent.state:
                 return False  # Cannot move if there's a red traffic light
             
             if isinstance(agent, Car) and agent is not self:
                 return False
-
         return True
     
-    def arrived_at_destination(self):
+    def trip_completed(self):
         # si estas donde un semaforo y esta rojo
         cell_contents = self.model.grid.get_cell_list_contents(self.pos)
         for agent in cell_contents:
-            if isinstance(agent, Traffic_Light) and not agent.state:
+            if isinstance(agent, TrafficLight) and not agent.state:
                 raise Exception(f"Car {self.unique_id} at {self.pos}: Encountered a red traffic light at destination")
                 
         if self.pos == self.destination_pos:
@@ -319,31 +248,30 @@ class Car(Agent):
 
     def move(self):
         if self.path is None or len(self.path) == 0:
-            self.path = self.find_path(self.pos, self.destination_pos)
-
+            self.path = self.createPath(self.pos, self.destination_pos)
         if self.path and len(self.path) > 0:
             next_position = self.path[0]  # Get the next position
-            if self.can_move_to(next_position):
+            if self.availableMove(next_position):
                 self.path.pop(0)  # Remove the next position from the path
                 self.dx, self.dy = next_position[0] - self.pos[0], next_position[1] - self.pos[1]
                 self.model.grid.move_agent(self, next_position)  # Move the car to the next position
 
     def step(self):
         if self.pos == self.destination_pos:
-            self.arrived_at_destination()
+            self.trip_completed()
         else:
             self.move()
 
 
-class Traffic_Light(Agent):
+class TrafficLight(Agent):
     def __init__(self, unique_id, model, state = False, timeToChange = 10, light_type = "S"):
         super().__init__(unique_id, model)
         self.state = state
-        self.light_type = light_type
         self.timeToChange = timeToChange
+        self.light_type = light_type
         self.traffic_light_states = {'S': False, 's': True}
 
-    def toggle_traffic_lights(self, light_type):
+    def colorChange(self, light_type):
         # Toggle the state of the specified light type
         previous_state = self.traffic_light_states[light_type]
         if light_type == 'S':
@@ -355,23 +283,17 @@ class Traffic_Light(Agent):
 
     def step(self):
         if self.model.schedule.steps % self.timeToChange == 0:
-            self.toggle_traffic_lights(self.light_type)
+            self.colorChange(self.light_type)
             self.state = self.traffic_light_states[self.light_type]
 
-class Destination(Agent):
-    def __init__(self, unique_id, model):
+class Road(Agent):
+    def __init__(self, unique_id, model, direction= "Left"):
         super().__init__(unique_id, model)
+        self.direction = direction
 
     def step(self):
         pass
-
-class Initialization(Agent):
-    def __init__(self, unique_id, model):
-        super().__init__(unique_id, model)
-
-    def step(self):
-        pass
-
+    
 class Obstacle(Agent):
     def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
@@ -379,10 +301,14 @@ class Obstacle(Agent):
     def step(self):
         pass
 
-class Road(Agent):
-    def __init__(self, unique_id, model, direction= "Left"):
+class Destination(Agent):
+    def __init__(self, unique_id, model):
         super().__init__(unique_id, model)
-        self.direction = direction
+    def step(self):
+        pass
 
+class Initialization(Agent):
+    def __init__(self, unique_id, model):
+        super().__init__(unique_id, model)
     def step(self):
         pass
