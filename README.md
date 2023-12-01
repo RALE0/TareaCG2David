@@ -6,7 +6,7 @@ Este proyecto consiste en una simulación de tráfico utilizando las herramienta
 https://drive.google.com/file/d/12GFH7hCYXpKs1qL_PU89yui7acM9XsXw/view?usp=sharing
 
 ## Integrantes del Equipo (Fusión Parcial de Equipos)
-Este equipo se formó a partir de una fusión parcial de dos equipos anteriores en los que dos integrantes, uno de cada equipo, decidieron unirse para colaborar en este proyecto. Esta colaboración surgió después de que ambos miembros experimentaran la partida de sus respectivas parejas en los equipos anteriores. Es importante destacar que se aprecia y valora el trabajo de los integrantes que partieron de los equipos anteriores, ya que su contribución fue fundamental en su momento. Los miembros de este equipo actual son:
+Este equipo se formó a partir de una fusión parcial de dos equipos anteriores en los que dos integrantes, uno de cada equipo, decidieron unirse para colaborar en este proyecto. Esta colaboración surgió después de que ambos miembros experimentaran la partida de sus respectivas parejas en los equipos anteriores. Es importante destacar que se aprecia y valora el trabajo de los integrantes que partieron de los equipos anteriores, ya que su contribución fue fundamental para la elaboración de este proyecto. Los miembros de este equipo actual son:
 
 - **David Santiago Vieyra García** - A01656030 - Investigador, Desarrollador, Analista y Tester
 - **Fernanda Cantú Ortega** - A01782232 - Investigador, Desarrollador, Analista y Tester
