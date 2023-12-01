@@ -2,6 +2,9 @@
 
 Este proyecto consiste en una simulación de tráfico utilizando las herramientas de desarrollo Unity y Python Mesa. El objetivo principal es desarrollar algoritmos que permitan a la mayor cantidad de vehículos (agentes) transitar y llegar a su destino respetando las señalizaciones de tránsito, tales como semáforos, normas de circulación y la interacción con otros vehículos. El enfoque principal es lograr que los vehículos lleguen a su destino en el menor tiempo posible o con la menor cantidad de pasos.
 
+## Video funcionamiento
+https://drive.google.com/file/d/12GFH7hCYXpKs1qL_PU89yui7acM9XsXw/view?usp=sharing
+
 ## Integrantes del Equipo
 
 - **David Santiago Vieyra García** - A01656030 - Investigador, Desarrollador, Analista y Tester
