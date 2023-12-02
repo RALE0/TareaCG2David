@@ -1,8 +1,8 @@
 # David Santiago Vieyra García A01656030
 # Para correr el código acceder al directorio dónde se encuentra el archivo y correr el siguiente comando:
-# python main.py 8 1.0 0.5 (lados, radio, ancho)
+# python TareaCG1.py 8 1.0 0.5 (lados, radio, ancho)
 # o simplemente correr el siguiente comando para desplegar un menú y poder ingresar los valores o usar los valores por defecto:
-# python main.py 
+# python TareaCG1,py 
 
 # Función que solicita al usuario el número de lados del círculo
 def solicitar_lados():
@@ -51,12 +51,13 @@ def calcular_normal(v1, v2, v3):
 
     # Normaliza el vector resultante
     magnitud = (normal_x**2 + normal_y**2 + normal_z**2)**0.5
+    if magnitud == 0:
+        return (0, 0, 1)
     return (normal_x / magnitud, normal_y / magnitud, normal_z / magnitud)
-
 
 def generar_archivo_obj(num_triangulos, radio, ancho):
     import math
-    with open("ruedaFinal.obj", "w") as archivo_obj:
+    with open("cilindro.obj", "w") as archivo_obj:
         archivo_obj.write(f"# OBJ file by David Vieyra\n")
         archivo_obj.write(f"# Vertices: {2*num_triangulos + 2}\n")
         # Escribir vértices del círculo inferior
@@ -64,6 +65,7 @@ def generar_archivo_obj(num_triangulos, radio, ancho):
             angulo1 = 2 * math.pi * i / num_triangulos # Calcula el ángulo entre cada vértice del círculo en radianes para formar los triángulos del círculo          
             y1 = radio * math.cos(angulo1)  # y ahora es la coordenada del radio
             z1 = radio * math.sin(angulo1)  # z ahora es la coordenada del radio
+            # Guardar vértices en una lista para calcular las normales
             archivo_obj.write(f"v 0.0000 {y1:.4f} {z1:.4f}\n") # Escribir vértice, x1, y1 y z1 con 4 decimales
 
         # Escribir vértices del círculo superior
@@ -73,59 +75,46 @@ def generar_archivo_obj(num_triangulos, radio, ancho):
             y1 = radio * math.cos(angulo1)  # y ahora es la coordenada del radio
             z1 = radio * math.sin(angulo1)  # z ahora es la coordenada del radio
             archivo_obj.write(f"v {x1:.4f} {y1:.4f} {z1:.4f}\n")
-
+            
         # Escribir vértices del centro de las bases
         archivo_obj.write(f"v 0.0000 0.0000 0.0000\n")
         archivo_obj.write(f"v {ancho:.4f} 0.0000 0.0000\n")
+
+        #imprimir lista de vertices
         
-        archivo_obj.write("vn 0.0000 0.0000 -1.0000\n")  # Normal de la base inferior
-        archivo_obj.write("vn 0.0000 0.0000 1.0000\n")   # Normal de la base superior
-        # Escribir normales de las caras
-        archivo_obj.write("# Normales de las caras\n")
+        # Calcular y escribir normales
+        archivo_obj.write(f"# Normals: {num_triangulos+2}\n")
+        archivo_obj.write("vn -1.0000 0.0000 0.0000\n")  # Normal de la base inferior
+        archivo_obj.write("vn 1.0000 0.0000 0.0000\n")   # Normal de la base superior
+
+        archivo_obj.write(f"# Normals of the lateral surface\n")
+        # Normales de la superficie lateral
         for i in range(num_triangulos):
-            siguiente = (i + 1) % num_triangulos
-            normal = calcular_normal(
-                (0.0, radio * math.cos(2 * math.pi * i / num_triangulos), radio * math.sin(2 * math.pi * i / num_triangulos)),
-                (ancho, radio * math.cos(2 * math.pi * siguiente / num_triangulos), radio * math.sin(2 * math.pi * siguiente / num_triangulos)),
-                (ancho, radio * math.cos(2 * math.pi * i / num_triangulos), radio * math.sin(2 * math.pi * i / num_triangulos))
-            )
+            v1 = (ancho, radio * math.cos(2 * math.pi * i / num_triangulos), radio * math.sin(2 * math.pi * i / num_triangulos))
+            v2 = (0.0, radio * math.cos(2 * math.pi * i / num_triangulos), radio * math.sin(2 * math.pi * i / num_triangulos))
+            v3 = (0.0, radio * math.cos(2 * math.pi * (i+1) / num_triangulos), radio * math.sin(2 * math.pi * (i+1) / num_triangulos))
+            normal = calcular_normal(v1, v2, v3)
             archivo_obj.write(f"vn {normal[0]:.4f} {normal[1]:.4f} {normal[2]:.4f}\n")
 
-        # # Calcular y escribir normales
-        # archivo_obj.write("vn 0.0000 0.0000 -1.0000\n")  # Normal de la base inferior
-        # archivo_obj.write("vn 0.0000 0.0000 1.0000\n")   # Normal de la base superior
-
-        # # Normales de la superficie lateral
-        # archivo_obj.write(f"# Normals: {num_triangulos+2}\n")
-        # for i in range(num_triangulos):
-        #     angulo1 = 2 * math.pi * i / num_triangulos
-        #     normal_x = math.cos(angulo1)
-        #     normal_y = math.sin(angulo1)
-        #     normal_z = 0.0
-        #     archivo_obj.write(f"vn {normal_x:.4f} {normal_y:.4f} {normal_z:.4f}\n")
-
         archivo_obj.write(f"# Faces: {num_triangulos*3}\n")
-        # Faces of the inferior base
-        archivo_obj.write("# Faces of the inferior base\n")
+        # Escribir caras de la base inferior
+        archivo_obj.write(f"# Faces of the inferior base\n")
         for i in range(num_triangulos):
             siguiente = (i + 1) % num_triangulos
-            archivo_obj.write(f"f {siguiente+1}//1 {i+1}//1 {2*num_triangulos+1}//1\n")
+            archivo_obj.write(f"f {siguiente+1}//1 {i+1}//1 {2*num_triangulos+1}//1 \n")
 
-        # Faces of the superior base
-        archivo_obj.write("# Faces of the superior base\n")
+        # Escribir caras de la base superior
+        archivo_obj.write(f"# Faces of the superior base\n")
         for i in range(num_triangulos):
             siguiente = (i + 1) % num_triangulos
             archivo_obj.write(f"f {num_triangulos+i+1}//2 {num_triangulos+siguiente+1}//2 {2*num_triangulos+2}//2\n")
 
-        # Lateral faces
-        archivo_obj.write("# Lateral faces\n")
+        # Escribir caras de la superficie lateral del cilindro en triangulos todas viendo hacia afuera y que usen su respectiva normal
+        archivo_obj.write(f"# Faces of the lateral surface s\n")
         for i in range(num_triangulos):
             siguiente = (i + 1) % num_triangulos
-            archivo_obj.write(f"f {i+1}//3 {num_triangulos+i+2}//3 {siguiente+1}//3\n")
-            archivo_obj.write(f"f {siguiente+1}//3 {num_triangulos+i+2}//3 {siguiente+2}//3\n")
-
-
-
+            archivo_obj.write(f"f {i+1}//{i+3} {siguiente+1}//{i+3} {num_triangulos+siguiente+1}//{i+3}\n")
+            archivo_obj.write(f"f {i+1}//{i+3} {num_triangulos+siguiente+1}//{i+3} {num_triangulos+i+1}//{i+3}\n")
 
 
     print(f"Archivo cilindro.obj creado exitosamente con {num_triangulos} triángulos, radio de {radio} unidades y ancho de {ancho} unidades.")
