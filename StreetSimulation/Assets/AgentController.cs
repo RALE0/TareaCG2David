@@ -131,17 +131,29 @@ public class AgentController : MonoBehaviour
 
                 Vector3 previousPosition = prevPositions[agent.Key];
 
-                Vector3 interpolated = Vector3.Lerp(previousPosition, currentPosition, dt);
-                Vector3 direction = currentPosition - interpolated;
+                agents[agent.Key].transform.localPosition = Vector3.Lerp(previousPosition, currentPosition, dt);
+                // Vector3 interpolated = Vector3.Lerp(previousPosition, currentPosition, dt);
+                // Vector3 direction = currentPosition - interpolated;
+                ApplyTransforms applyTransforms = agents[agent.Key].GetComponent<ApplyTransforms>();
 
-                agents[agent.Key].transform.localPosition = interpolated;
-                if (direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, -90, 0);
+                if (applyTransforms != null)
+                {
+                    applyTransforms.DoTransform();
+                }
+                else
+                {
+                    Debug.LogError("No ApplyTransforms component found");
+                }
+
+                // agents[agent.Key].transform.localPosition = interpolated;
+                // agents[agent.Key].GetComponent<ApplyTransforms>().DoTransform();
+                // if (direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, -90, 0);
                 
-                Quaternion currentRotation = agents[agent.Key].transform.rotation;
-                Vector3 currentEulerAngles = currentRotation.eulerAngles;
+                // Quaternion currentRotation = agents[agent.Key].transform.rotation;
+                // Vector3 currentEulerAngles = currentRotation.eulerAngles;
                 
-                Vector3 newEulerAngles = new Vector3(0, currentEulerAngles.y, 0);
-                agents[agent.Key].transform.rotation = Quaternion.Euler(newEulerAngles);
+                // Vector3 newEulerAngles = new Vector3(0, currentEulerAngles.y, 0);
+                // agents[agent.Key].transform.rotation = Quaternion.Euler(newEulerAngles);
             }
         }
     }

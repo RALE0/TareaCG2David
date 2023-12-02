@@ -112,10 +112,10 @@ class CityModel(Model):
         if self.step_count % 3 == 0:
             self.initialize_cars()
         
-        if self.schedule.steps % 100 == 0:
-            print ("STEP: ", self.schedule.steps)
-            post(self.arrived_cars)
-            print("POSTED NUMBER OF CARS")
+        # if self.schedule.steps % 100 == 0:
+        #     print ("STEP: ", self.schedule.steps)
+        #     post(self.arrived_cars)
+        #     print("POSTED NUMBER OF CARS")
             
         if self.step_count == 1000 or self.schedule.steps == 1000:
             self.running = False
