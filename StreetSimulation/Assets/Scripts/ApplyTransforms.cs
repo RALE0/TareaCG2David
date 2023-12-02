@@ -97,7 +97,6 @@ public class ApplyTransforms : MonoBehaviour
                                                         displacement.y * Time.time,
                                                         displacement.z * Time.time);
 
-        Debug.Log("Matriz de traslación conseguida");
         // Multiplicar cada vertice del coche por la matriz de traslación
         for (int i = 0; i < car_newVertices.Length; i++)
         {

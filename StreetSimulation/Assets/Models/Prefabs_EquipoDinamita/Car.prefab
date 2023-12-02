@@ -194,6 +194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3677499753732374756}
   - component: {fileID: 264624944924195876}
+  - component: {fileID: 7293346307679994392}
   m_Layer: 0
   m_Name: Car
   m_TagString: Untagged
@@ -210,7 +211,7 @@ Transform:
   m_GameObject: {fileID: 3460977439320669686}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 37.79794, y: 0.8, z: 129.4}
+  m_LocalPosition: {x: 37.686, y: 0.8, z: 129.4}
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -228,7 +229,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3460977439320669686}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc5de3dcc310e73488db95085e032cdd, type: 3}
   m_Name: 
@@ -243,6 +244,18 @@ MonoBehaviour:
   - {fileID: 3942641083144080181}
   - {fileID: 7331403798734075834}
   - {fileID: 7841896700905902447}
+--- !u!114 &7293346307679994392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3460977439320669686}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f3f5c026c2d8f4492fc35ea25ae2ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3942641083144080181
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,9 +391,6 @@ GameObject:
   - component: {fileID: 5955982652466791738}
   - component: {fileID: 4351975782556648072}
   - component: {fileID: 8330380956635380676}
-  - component: {fileID: 1516247776164756346}
-  - component: {fileID: 134873449039204683}
-  - component: {fileID: 3498764927966870570}
   m_Layer: 0
   m_Name: Red Car
   m_TagString: Untagged
@@ -458,63 +468,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1516247776164756346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4333035573968200794}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fffa6c0aadd0fd40812ffc489fb3685, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentSpeed: 0.1
-  angle: 1
-  WheelObjects:
-  - {fileID: 6560510645435728558}
-  - {fileID: 3942641083144080181}
-  - {fileID: 7331403798734075834}
-  - {fileID: 7841896700905902447}
-  displacement: {x: 0, y: 0, z: 0}
-  rotationAxis: 0
-  rotationSpeed: 50
---- !u!114 &134873449039204683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4333035573968200794}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3e4995e596a5df44aaa7c9324517d0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &3498764927966870570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4333035573968200794}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27502ef84e1600439b4770e9c0907a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startPosition: {x: 37.8, y: 1, z: 27}
-  endPosition: {x: 50, y: 1, z: 27}
-  t: 0
-  moveTime: 10
-  followerObjects:
-  - {fileID: 3805877599012966547}
-  - {fileID: 481893272019560692}
-  - {fileID: 1763799807159390298}
-  - {fileID: 2574447100023309621}
-  maxSpeed: 10
-  wheelRotationSpeedMultiplier: 100
 --- !u!1 &6124228460374259147
 GameObject:
   m_ObjectHideFlags: 0

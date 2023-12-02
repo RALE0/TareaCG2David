@@ -485,7 +485,7 @@ public class BasicLerp : MonoBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, -90, 0);
             transform.rotation = targetRotation;
-            Matrix4x4 rotate = HW_TransformsFer.RotateMat(targetRotation.eulerAngles.y, Vector3.up);
+            Matrix4x4 rotate = HW_Transforms.RotateMat(targetRotation.eulerAngles.y, Vector3.up);
             
         }
 
@@ -503,7 +503,7 @@ public class BasicLerp : MonoBehaviour
             
             // Set follower's rotation (similar to the main object's rotation)
             Quaternion followerTargetRotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, -90, 0); // Adjust the rotation as needed
-            Matrix4x4 rotateFollower = HW_TransformsFer.RotateMat(followerTargetRotation.eulerAngles.y, Vector3.up);
+            Matrix4x4 rotateFollower = HW_Transforms.RotateMat(followerTargetRotation.eulerAngles.y, Vector3.up);
 
             // Apply position and rotation transformations to the follower object
             followerObjects[i].position = followerPosition; // Update the position directly
@@ -544,7 +544,7 @@ public class BasicLerp : MonoBehaviour
     {
         wheelRotationTime += Time.deltaTime;
         float rotationAmount = -speed * wheelRotationSpeedMultiplier * wheelRotationTime;
-        Matrix4x4 rotateWheel = HW_TransformsFer.RotateMat(rotationAmount, wheel.forward);
+        Matrix4x4 rotateWheel = HW_Transforms.RotateMat(rotationAmount, wheel.forward);
         wheel.Rotate(Vector3.forward, rotationAmount);
 
         // Apply additional rotations using Matrix4x4 if needed
