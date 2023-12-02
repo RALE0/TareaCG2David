@@ -131,23 +131,21 @@ public class AgentController : MonoBehaviour
 
                 Vector3 previousPosition = prevPositions[agent.Key];
 
-                agents[agent.Key].transform.localPosition = Vector3.Lerp(previousPosition, currentPosition, dt);
                 Vector3 interpolated = Vector3.Lerp(previousPosition, currentPosition, dt);
                 Vector3 direction = currentPosition - interpolated;
-                
-                // ApplyTransforms applyTransforms = agents[agent.Key].GetComponent<ApplyTransforms>();
 
+                // agents[agent.Key].transform.localPosition = Vector3.Lerp(previousPosition, currentPOsition, dt);
+                // ApplyTransforms applyTransforms = agents[agent.Key].GetComponent<ApplyTransforms>();
                 // if (applyTransforms != null)
                 // {
                 //     applyTransforms.DoTransform();
                 // }
                 // else
                 // {
-                //     Debug.LogError("No ApplyTransforms component found");
+                //     Debug.LogError("ApplyTransforms not found");
                 // }
 
                 agents[agent.Key].transform.localPosition = interpolated;
-                agents[agent.Key].GetComponent<ApplyTransforms>().DoTransform();
                 if (direction != Vector3.zero) agents[agent.Key].transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, -90, 0);
                 
                 Quaternion currentRotation = agents[agent.Key].transform.rotation;
