@@ -1,167 +1,131 @@
-// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEngine;
 
-// public class MoveCar : MonoBehaviour
-// {
-//     [SerializeField] float currentSpeed = 0.1f;
-//     [SerializeField] float angle = 1f;
-//     public GameObject[] WheelObjects;  // Reference to wheel game objects
+// David Santiago Vieyra García A01656030
+// Tarea CG2 Movimiento del carro y las llantas con matrices de transformación. 
+// De acuerdo a la orientación del desplazamiento del carro, se calcula el ángulo de rotación del carro y de las llantas. 
+// Haciendo que en todo momento el carro oriente su frente hacia el movimiento y las llantas giren en el eje Z. 
 
-//     [SerializeField] Vector3 displacement;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-//     [SerializeField]AXIS rotationAxis;
+public class CarTransformations : MonoBehaviour
+{
+    [SerializeField] Vector3 movementDirection; // Direction of car movement
+    private float wheelSpinSpeed; // Speed of wheel spin
+    [SerializeField] GameObject[] wheels; // Array to assign wheels in the inspector
 
-//     Mesh[] wheelMesh;
-//     Vector3[] wheelVertices;
+    Transform carTransform; // Car's transform
+    float rotationAngle; // Rotation angle of the car
+    Mesh[] carMeshes; // Array to store car and wheel meshes
+    Vector3[][] baseVertices; // Array to store base vertices of meshes
+    Vector3[][] transformedVertices; // Array to store transformed vertices of meshes
 
-    
+    // Start is called before the first frame update
+    void Start()
+    {
+        if (wheels.Length != 4)
+        {
+            Debug.LogError("Four wheels must be assigned!");
+            return;
+        }
 
-//     Mesh mesh;
-//     Vector3[] baseVertices;
-//     Vector3[] newVertices;
+        carTransform = gameObject.transform;
 
-//     Vector3 lastPosition;
+        carMeshes = new Mesh[5];
+        baseVertices = new Vector3[5][];
+        transformedVertices = new Vector3[5][];
 
-//     public float rotationSpeed = 90f;
+        carMeshes[0] = GetComponentInChildren<MeshFilter>().mesh;
+        for (int i = 0; i < wheels.Length; i++)
+        {
+            carMeshes[i + 1] = wheels[i].GetComponentInChildren<MeshFilter>().mesh;
+        }
 
-//     void Start()
-//     {
-//         InitializeWheels();
-//         mesh = GetComponentInChildren<MeshFilter>().mesh;
-//         baseVertices = mesh.vertices;
+        for (int i = 0; i < carMeshes.Length; i++)
+        {
+            baseVertices[i] = carMeshes[i].vertices;
+            transformedVertices[i] = new Vector3[baseVertices[i].Length];
+            for (int j = 0; j < baseVertices[i].Length; j++)
+            {
+                transformedVertices[i][j] = baseVertices[i][j];
+            }
+        }
+    }
 
-//         newVertices = new Vector3[baseVertices.Length];
-//         for (int i = 0; i < baseVertices.Length; i++)
-//         {
-//             newVertices[i] = baseVertices[i];
-//         }
+    // Update is called once per frame
+    void Update()
+    {
+        // Calculate the car's speed per frame based on movement direction
+        float carSpeed = movementDirection.magnitude;
+        Debug.Log("Car speed: " + carSpeed);
 
-//         lastPosition = transform.position;
-        
-//     }
+        // Calculate the spin speed based on the car's speed and wheel spin radius
+        // Convert linear speed to angular velocity: v = r * omega
+        wheelSpinSpeed = carSpeed * 10000; // This is in radians per frame
+        Debug.Log("Wheel spin speed: " + wheelSpinSpeed);
 
-//     void Update()
-//     {
-//         float translationAmount = currentSpeed * Time.deltaTime;
+        ApplyTransformations();
+    }
 
-//         if (Input.GetKey(KeyCode.W))
-//         {
-//             MoveCarFBObject(translationAmount);
-//             MoveWheelsandRotate(translationAmount);
-//         }
+    void ApplyTransformations()
+    {
+        // Calculate the rotation angle of the car based on the movement direction
+        rotationAngle = Mathf.Atan2(movementDirection.z, movementDirection.x) * Mathf.Rad2Deg;
 
-//         if (Input.GetKey(KeyCode.S))
-//         {
-//             MoveCarFBObject(-translationAmount);
-//             MoveWheelsandRotate(-translationAmount);
-//         }
+        // Transformation matrix for movement
+        Matrix4x4 translationMatrix = HW_Transforms.TranslationMat(movementDirection.x * Time.time,
+                                                                  movementDirection.y * Time.time,
+                                                                  movementDirection.z * Time.time);
 
-        
-//         // Function to move the car sideways and make it look towards the side it is moving in the y axis with matrix application 
-//         if (Input.GetKey(KeyCode.A))
-//         {
-//             MoveCarLRObject(translationAmount);
-//             MoveWheelsLR(translationAmount);  
-//         }
+        // Transformation matrix for car rotation
+        Matrix4x4 rotationMatrix = HW_Transforms.RotateMat(rotationAngle, AXIS.Y);
 
-//         if (Input.GetKey(KeyCode.D))
-//         {
-//             MoveCarLRObject(-translationAmount);
-//             MoveWheelsLR(-translationAmount);
-//         }
+        // Transformation matrix for wheel spin along the Z-axis
+        Matrix4x4 wheelSpinMatrix = HW_Transforms.RotateMat(wheelSpinSpeed * Time.time, AXIS.Z);
 
-//         mesh.vertices = newVertices;
-//         mesh.RecalculateNormals();
+        for (int i = 0; i < carMeshes.Length; i++)
+        {
+            Matrix4x4 compositeMatrix;
 
-//         lastPosition = transform.position;
-//     }
+            if (i > 0)
+            {
+                // Calculate the relative position of the wheel with respect to the car
+                Vector3 wheelPositionRelativeToCar = carTransform.InverseTransformPoint(wheels[i - 1].transform.position);
 
-//     void InitializeWheels()
-//     {
-//         foreach (GameObject wheelObject in WheelObjects)
-//         {
-//             Mesh wheelMesh = wheelObject.GetComponentInChildren<MeshFilter>().mesh;
-//             // Get the wheel's mesh and vertices, do the initialization here
-//             Vector3[] wheelVertices = wheelMesh.vertices; // 
-//         }
-//     }
+                // Transformation matrix to bring the wheel to the origin
+                Matrix4x4 moveToOriginMatrix = HW_Transforms.TranslationMat(-wheelPositionRelativeToCar.x,
+                                                                          -wheelPositionRelativeToCar.y,
+                                                                          -wheelPositionRelativeToCar.z);
 
-//     bool hasRotatedForward = false; // Keep track of forward rotation
-//     bool hasRotatedBackward = false; // Keep track of backward rotation
+                // Transformation matrix to return the wheel to its original position
+                Matrix4x4 returnToOriginalPositionMatrix = HW_Transforms.TranslationMat(wheelPositionRelativeToCar.x,
+                                                                                      wheelPositionRelativeToCar.y,
+                                                                                      wheelPositionRelativeToCar.z);
 
-//     void MoveCarFBObject(float translationAmount)
-//     {
-//         // Calculate translation matrix for forward/backward movement
-//         Matrix4x4 move = HW_TransformsFer.TranslationMat(translationAmount, 0f, 0f);
+                // Combine the transformations
+                compositeMatrix = translationMatrix * moveToOriginMatrix * rotationMatrix * returnToOriginalPositionMatrix * wheelSpinMatrix;
+            }
+            else
+            {
+                // Apply transformations for the car body (not wheels)
+                compositeMatrix = translationMatrix * rotationMatrix;
+            }
 
-//         // Apply the translation to the car
-//         ApplyTransformation(move);
+            for (int j = 0; j < baseVertices[i].Length; j++)
+            {
+                Vector4 tempVector = new Vector4(baseVertices[i][j].x,
+                                                baseVertices[i][j].y,
+                                                baseVertices[i][j].z,
+                                                1);
 
-//     }
+                // Apply the composite transformation to the vertices
+                transformedVertices[i][j] = compositeMatrix * tempVector;
+            }
 
-//     bool hasRotated = false; // Keep track of whether rotation has occurred
-
-//     void MoveCarLRObject(float translationAmount)
-//     {
-//         Matrix4x4 move = HW_TransformsFer.TranslationMat(0f, 0f, translationAmount);
-//         ApplyTransformation(move);
-//     }
-
-
-    
-//     void MoveWheelsLR(float translationAmount)
-//     {
-//         foreach (GameObject wheelObject in WheelObjects)
-//         {
-//             Mesh wheelMesh = wheelObject.GetComponentInChildren<MeshFilter>().mesh;
-//             Vector3[] wheelVertices = wheelMesh.vertices;
-//             Matrix4x4 move = HW_TransformsFer.TranslationMat(0f, 0f, translationAmount);
-//             Matrix4x4 rotate = HW_TransformsFer.RotateMat(angle * Time.time, AXISFer.Z);
-//             Matrix4x4 composite = move * rotate;
-
-//             for (int i = 0; i < wheelVertices.Length; i++)
-//             {
-//                 Vector4 temp = new Vector4(wheelVertices[i].x, wheelVertices[i].y, wheelVertices[i].z, 1);
-//                 wheelVertices[i] = move * temp;
-//             }
-
-//             wheelMesh.vertices = wheelVertices;
-//             wheelMesh.RecalculateNormals();
-//         }
-//     }
-
-
-
-//     void ApplyTransformation(Matrix4x4 transformationMatrix)
-//     {
-//         for (int i = 0; i < newVertices.Length; i++)
-//         {
-//             Vector4 temp = new Vector4(newVertices[i].x, newVertices[i].y, newVertices[i].z, 1);
-//             newVertices[i] = transformationMatrix * temp;
-//         }
-//     }
-
-//     void MoveWheelsandRotate(float translationAmount)
-//     {
-//         foreach (GameObject wheelObject in WheelObjects)
-//         {
-//             Mesh wheelMesh = wheelObject.GetComponentInChildren<MeshFilter>().mesh;
-//             Vector3[] wheelVertices = wheelMesh.vertices;
-
-//             Matrix4x4 move = HW_TransformsFer.TranslationMat(translationAmount, 0f, 0f);
-//             Matrix4x4 rotate = HW_TransformsFer.RotateMat(angle * Time.time, AXISFer.Z);
-
-//             Matrix4x4 composite = move;
-
-//             for (int i = 0; i < wheelVertices.Length; i++)
-//             {
-//                 Vector4 temp = new Vector4(wheelVertices[i].x, wheelVertices[i].y, wheelVertices[i].z, 1);
-//                 wheelVertices[i] = composite * temp;
-//             }
-
-//             wheelMesh.vertices = wheelVertices;
-//             wheelMesh.RecalculateNormals();
-//         }
-//     }
-// }
+            // Update the mesh with the transformed vertices
+            carMeshes[i].vertices = transformedVertices[i];
+            carMeshes[i].RecalculateNormals();
+            carMeshes[i].RecalculateBounds();
+        }
+    }
+}
