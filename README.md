@@ -20,7 +20,7 @@ Este equipo se formó a partir de una fusión parcial de dos equipos anteriores 
 
 ### David Santiago Vieyra García
 
-David Santiago Vieyra García es un estudiante mexicano nacido en la Ciudad de México. Actualmente está cursando su licenciatura en Ingeniería en Tecnologías Computacionales en el Instituto Tecnológico y de Estudios Superiores de Monterrey (ITESM). Apasionado por el desarrollo de software, David ha estado involucrado en proyectos relacionados con la simulación y la inteligencia artificial aplicada al tráfico vehicular. Sus intereses también incluyen la programación de sistemas distribuidos y el análisis de datos. Fuera de su vida académica, disfruta del deporte y la exploración de nuevas tecnologías.
+David Santiago Vieyra García es un estudiante mexicano nacido en la Ciudad de México. Actualmente está cursando Ingeniería en Tecnologías Computacionales en el Instituto Tecnológico y de Estudios Superiores de Monterrey (ITESM). Apasionado por el desarrollo de software, David ha estado involucrado en proyectos relacionados con la simulación y la inteligencia artificial aplicada al tráfico vehicular. Sus intereses también incluyen la programación de sistemas distribuidos y el análisis de datos. Fuera de su vida académica, disfruta del deporte y la exploración de nuevas tecnologías.
 
 ### Fernanda Cantú Ortega
 
